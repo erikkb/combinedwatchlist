@@ -1,0 +1,48 @@
+### Find ALl Movies
+GET http://localhost:8080/api/movies
+
+### Find Movie By ID
+GET http://localhost:8080/api/movies/2
+
+
+### Create new Movie
+POST http://localhost:8080/api/movies
+Content-Type: application/json
+
+{
+  "id": 3,
+  "title": "test",
+  "description": "testing.",
+  "genre": "Action",
+  "rating": "R",
+  "releaseDate": "1912-03-31"
+}
+
+### Create invalid Movie
+POST http://localhost:8080/api/movies
+Content-Type: application/json
+
+{
+  "id": 5,
+  "title": "",
+  "description": "testing.",
+  "genre": "Action",
+  "rating": "R",
+  "releaseDate": "1912-03-31"
+}
+
+### Update an existing Movie
+PUT http://localhost:8080/api/movies/3
+Content-Type: application/json
+
+{
+  "id": 3,
+  "title": "updated test",
+  "description": "testing.",
+  "genre": "Action",
+  "rating": "R",
+  "releaseDate": "1912-03-31"
+}
+
+### Delete a Movie
+DELETE http://localhost:8080/api/movies/3

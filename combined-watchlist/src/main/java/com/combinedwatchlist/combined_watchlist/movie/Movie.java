@@ -1,5 +1,7 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
+import jakarta.validation.constraints.NotEmpty;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -10,14 +12,15 @@ import java.util.Objects;
 public class Movie {
 
     private long id;
+    @NotEmpty
     private String title;
     private String description;
     private String genre;
     private String rating;
     private LocalDate releaseDate;
 
-    public Movie() {
-    }
+//    public Movie() {
+//    }
 
     public Movie(long id, String title, String description, String genre, String rating, LocalDate releaseDate) {
         this.id = id;
