@@ -29,9 +29,7 @@ public class MovieRepository {
 
     void update(Movie movie, long id) {
         Optional<Movie> existingMovie = findById(id);
-        if(existingMovie.isPresent()) {
-            movies.set(movies.indexOf(existingMovie.get()), movie);
-        }
+        existingMovie.ifPresent(mv -> movies.set(movies.indexOf(mv), movie));
     }
 
     void delete(long id) {
