@@ -1,6 +1,9 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -9,8 +12,10 @@ import java.util.Objects;
  * Basic Movie Class (unfinished)
  * Can't be a record because streaming service provider needs to be changeable
  */
+//@Table("movie")
 public class Movie {
 
+    @Id
     private long id;
     @NotEmpty
     private String title;
@@ -18,6 +23,8 @@ public class Movie {
     private String genre;
     private String rating;
     private LocalDate releaseDate;
+    @Version
+    private int version;
 
 //    public Movie() {
 //    }

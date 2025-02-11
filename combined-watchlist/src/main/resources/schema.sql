@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS Movie (
     genre VARCHAR(255) NOT NULL,
     rating VARCHAR(5)  NOT NULL,
     release_date DATE NOT NULL,
+    version INT,
     PRIMARY KEY (id)
 );

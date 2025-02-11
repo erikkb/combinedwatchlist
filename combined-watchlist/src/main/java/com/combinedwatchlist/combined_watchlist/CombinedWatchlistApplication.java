@@ -1,6 +1,7 @@
 package com.combinedwatchlist.combined_watchlist;
 
 import com.combinedwatchlist.combined_watchlist.movie.Movie;
+//import com.combinedwatchlist.combined_watchlist.movie.JdbcClientMovieRepository;
 import com.combinedwatchlist.combined_watchlist.movie.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,12 @@ public class CombinedWatchlistApplication {
 		SpringApplication.run(CombinedWatchlistApplication.class, args);
 	}
 
-	//runs after application is started and application context is loaded by Spring
+	/**
+	 * Pre-load the database with some movies.
+	 * runs after application is started and application context is loaded by Spring
+	 * !!! comment out if movie table already exists in database
+	 */
+
 	@Bean
 	CommandLineRunner runner(MovieRepository movieRepository) {
 		return args -> {

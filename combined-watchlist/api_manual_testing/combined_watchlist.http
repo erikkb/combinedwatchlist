@@ -10,13 +10,14 @@ POST http://localhost:8080/api/movies
 Content-Type: application/json
 
 {
-  "id": 3,
-  "title": "test",
-  "description": "testing.",
-  "genre": "Action",
+  "id": 7,
+  "title": "The Shawshank Redemption",
+  "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+  "genre": "Drama",
   "rating": "R",
-  "releaseDate": "1912-03-31"
+  "releaseDate": "1994-09-23"
 }
+
 
 ### Create invalid Movie
 POST http://localhost:8080/api/movies
@@ -32,11 +33,11 @@ Content-Type: application/json
 }
 
 ### Update an existing Movie
-PUT http://localhost:8080/api/movies/3
+PUT http://localhost:8080/api/movies/4
 Content-Type: application/json
 
 {
-  "id": 3,
+  "id": 4,
   "title": "updated test",
   "description": "testing.",
   "genre": "Action",

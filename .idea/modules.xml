@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/combined-watchlist/combined-watchlist.iml" filepath="$PROJECT_DIR$/combined-watchlist/combined-watchlist.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/combinedwatchlist.iml" filepath="$PROJECT_DIR$/.idea/combinedwatchlist.iml" />
     </modules>
   </component>
