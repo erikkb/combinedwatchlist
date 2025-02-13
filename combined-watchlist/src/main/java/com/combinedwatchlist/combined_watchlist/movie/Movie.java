@@ -6,36 +6,72 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
-/**
- * Basic Movie Class (unfinished)
- * Can't be a record because streaming service provider needs to be changeable
- */
-//@Table("movie")
+@Table("movie")
 public class Movie {
 
     @Id
     private long id;
+    private boolean adult;
+    private String backdropPath;
+    private List<Integer> genreIds;
+    private String originalLanguage;
+    private String originalTitle;
+    private String overview;
+    private double popularity;
+    private String posterPath;
+    private LocalDate releaseDate;
     @NotEmpty
     private String title;
-    private String description;
-    private String genre;
-    private String rating;
-    private LocalDate releaseDate;
+    private boolean video;
+    private double voteAverage;
+    private int voteCount;
+    //providerNames and Logos not as Pair/Tuple to make storing in database easier, can be turned into Pair in service
+    private List<String> providerNames = null;
+    private List<String> providerLogos = null;
     @Version
     private int version;
 
-//    public Movie() {
-//    }
 
-    public Movie(long id, String title, String description, String genre, String rating, LocalDate releaseDate) {
+    public Movie() {
+    }
+
+    public Movie(long id, boolean adult, String backdropPath, List<Integer> genreIds, String originalLanguage, String originalTitle, String overview, double popularity, String posterPath, LocalDate releaseDate, String title, boolean video, double voteAverage, int voteCount) {
         this.id = id;
-        this.title = title;
-        this.description = description;
-        this.genre = genre;
-        this.rating = rating;
+        this.adult = adult;
+        this.backdropPath = backdropPath;
+        this.genreIds = genreIds;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
         this.releaseDate = releaseDate;
+        this.title = title;
+        this.video = video;
+        this.voteAverage = voteAverage;
+        this.voteCount = voteCount;
+    }
+
+    public Movie(long id, boolean adult, String backdropPath, List<Integer> genreIds, String originalLanguage, String originalTitle, String overview, double popularity, String posterPath, LocalDate releaseDate, String title, boolean video, double voteAverage, int voteCount, List<String> providerNames, List<String> providerLogos) {
+        this.id = id;
+        this.adult = adult;
+        this.backdropPath = backdropPath;
+        this.genreIds = genreIds;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.releaseDate = releaseDate;
+        this.title = title;
+        this.video = video;
+        this.voteAverage = voteAverage;
+        this.voteCount = voteCount;
+        this.providerNames = providerNames;
+        this.providerLogos = providerLogos;
     }
 
     public long getId() {
@@ -46,36 +82,68 @@ public class Movie {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public boolean isAdult() {
+        return adult;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setAdult(boolean adult) {
+        this.adult = adult;
     }
 
-    public String getDescription() {
-        return description;
+    public String getBackdropPath() {
+        return backdropPath;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 
-    public String getGenre() {
-        return genre;
+    public List<Integer> getGenreIds() {
+        return genreIds;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public void setGenreIds(List<Integer> genreIds) {
+        this.genreIds = genreIds;
     }
 
-    public String getRating() {
-        return rating;
+    public String getOriginalLanguage() {
+        return originalLanguage;
     }
 
-    public void setRating(String rating) {
-        this.rating = rating;
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public double getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(double popularity) {
+        this.popularity = popularity;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 
     public LocalDate getReleaseDate() {
@@ -84,6 +152,62 @@ public class Movie {
 
     public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public boolean isVideo() {
+        return video;
+    }
+
+    public void setVideo(boolean video) {
+        this.video = video;
+    }
+
+    public double getVoteAverage() {
+        return voteAverage;
+    }
+
+    public void setVoteAverage(double voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    public List<String> getProviderNames() {
+        return providerNames;
+    }
+
+    public void setProviderNames(List<String> providerNames) {
+        this.providerNames = providerNames;
+    }
+
+    public void addProviderName(String providerName) {
+        this.providerNames.add(providerName);
+    }
+
+    public List<String> getProviderLogos() {
+        return providerLogos;
+    }
+
+    public void setProviderLogos(List<String> providerLogos) {
+        this.providerLogos = providerLogos;
+    }
+
+    public void addProviderLogo(String providerLogo) {
+        this.providerLogos.add(providerLogo);
     }
 
     @Override
@@ -102,11 +226,19 @@ public class Movie {
     public String toString() {
         return "Movie{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", genre='" + genre + '\'' +
-                ", rating='" + rating + '\'' +
+                ", adult=" + adult +
+                ", backdropPath='" + backdropPath + '\'' +
+                ", genreIds=" + genreIds +
+                ", originalLanguage='" + originalLanguage + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
+                ", overview='" + overview + '\'' +
+                ", popularity=" + popularity +
+                ", posterPath='" + posterPath + '\'' +
                 ", releaseDate=" + releaseDate +
+                ", title='" + title + '\'' +
+                ", video=" + video +
+                ", voteAverage=" + voteAverage +
+                ", voteCount=" + voteCount +
                 '}';
     }
 }

@@ -44,8 +44,9 @@ public class MovieController {
         movieService.delete(id);
     }
 
-    @GetMapping("/genre/{genre}")
-    List<Movie> findByGenre(@PathVariable String genre) {
-        return movieService.findByGenre(genre);
-    }
+//    @GetMapping("/genre/{genre}")
+//    List<Movie> findByGenre(@PathVariable String genre) {
+//        return movieService.findByGenre(genre);
+//    }
+
 }

@@ -1,7 +1,9 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +32,7 @@ public class MovieService {
         movieRepository.save(movie);
     }
 
-    //works for now as workaround to the error with updating via save() stating that the id already exists
+    //works for now as workaround to the error with updating via save() stating that the id already exists (something with sequence?)
     public void update(Movie movie, long id) {
         if(id==movie.getId()){
             delete(id);
@@ -42,7 +44,26 @@ public class MovieService {
         movieRepository.delete(findById(id));
     }
 
-    List<Movie> findByGenre(String genre) {
-        return movieRepository.findByGenre(genre);
+    List<Pair<String, String>> getProviders(Movie movie) {
+        List<Pair<String, String>> providers = new ArrayList<>();
+        List<String> providerNames = movie.getProviderNames();
+        List<String> providerLogos = movie.getProviderLogos();
+        for (int i = 0; i < providerNames.size(); i++) {
+            providers.add((Pair.of(providerNames.get(i), providerLogos.get(i))));
+        }
+        return providers;
     }
+
+    List<String> getGenreNames(Movie movie) {
+        List<String> genreNames = new ArrayList<>();
+        List<Integer> genreIds = movie.getGenreIds();
+        for (int genreId : genreIds) {
+            genreNames.add(MovieGenre.fromId(genreId).getName());
+        }
+        return genreNames;
+    }
+
+//    List<Movie> findByGenre(String genre) {
+//        return movieRepository.findByGenre(genre);
+//    }
 }

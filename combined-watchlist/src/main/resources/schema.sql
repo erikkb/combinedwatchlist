@@ -1,10 +1,20 @@
-CREATE TABLE IF NOT EXISTS Movie (
-    id BIGINT NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
-    genre VARCHAR(255) NOT NULL,
-    rating VARCHAR(5)  NOT NULL,
-    release_date DATE NOT NULL,
-    version INT,
-    PRIMARY KEY (id)
+CREATE TABLE IF NOT EXISTS movie (
+     id BIGINT NOT NULL,
+     adult BOOLEAN NOT NULL,
+     backdrop_path VARCHAR(255),
+     genre_ids INT[],
+     original_language VARCHAR(255),
+     original_title VARCHAR(255),
+     overview TEXT,
+     popularity FLOAT,
+     poster_path VARCHAR(255),
+     release_date DATE,
+     title VARCHAR(255) NOT NULL,
+     video BOOLEAN,
+     vote_average FLOAT,
+     vote_count INT,
+     provider_names VARCHAR(255)[],
+     provider_logos VARCHAR(255)[],
+     version INT,
+     PRIMARY KEY (id)
 );

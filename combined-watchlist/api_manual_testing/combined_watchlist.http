@@ -1,4 +1,4 @@
-### Find ALl Movies
+### Find All Movies
 GET http://localhost:8080/api/movies
 
 ### Find Movie By ID
@@ -11,39 +11,59 @@ Content-Type: application/json
 
 {
   "id": 7,
+  "adult": false,
+  "backdropPath": "",
+  "genreIds": [18],
+  "originalLanguage": "en",
+  "originalTitle": "The Shawshank Redemption",
+  "overview": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+  "popularity": 0.0,
+  "posterPath": "",
+  "releaseDate": "1994-09-23",
   "title": "The Shawshank Redemption",
-  "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-  "genre": "Drama",
-  "rating": "R",
-  "releaseDate": "1994-09-23"
+  "video": false,
+  "voteAverage": 0.0,
+  "voteCount": 0,
+  "providerNames": ["assd", "assd2", "aassdaadaw"],
+  "providerLogos": ["assd", "assd2", "aassdaad123aw"]
 }
 
 
-### Create invalid Movie
-POST http://localhost:8080/api/movies
-Content-Type: application/json
-
-{
-  "id": 5,
-  "title": "",
-  "description": "testing.",
-  "genre": "Action",
-  "rating": "R",
-  "releaseDate": "1912-03-31"
-}
+#### Create invalid Movie
+#POST http://localhost:8080/api/movies
+#Content-Type: application/json
+#
+#{
+#  "id": 5,
+#  "title": "",
+#  "description": "testing.",
+#  "genre": "Action",
+#  "rating": "R",
+#  "releaseDate": "1912-03-31"
+#}
 
 ### Update an existing Movie
-PUT http://localhost:8080/api/movies/4
+PUT http://localhost:8080/api/movies/7
 Content-Type: application/json
 
 {
-  "id": 4,
-  "title": "updated test",
-  "description": "testing.",
-  "genre": "Action",
-  "rating": "R",
-  "releaseDate": "1912-03-31"
+  "id": 7,
+  "adult": false,
+  "backdropPath": "",
+  "genreIds": [18],
+  "originalLanguage": "en",
+  "originalTitle": "The Shawshank Redemption",
+  "overview": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+  "popularity": 0.0,
+  "posterPath": "",
+  "releaseDate": "1994-09-23",
+  "title": "The Shawshank Redemption",
+  "video": false,
+  "voteAverage": 0.0,
+  "voteCount": 0,
+  "providerNames": ["assd", "assd2", "aassdaadaw", "newProvider"],
+  "providerLogos": ["assd", "assd2", "aassdaad123aw", "newLogo"]
 }
 
 ### Delete a Movie
-DELETE http://localhost:8080/api/movies/3
+DELETE http://localhost:8080/api/movies/7
