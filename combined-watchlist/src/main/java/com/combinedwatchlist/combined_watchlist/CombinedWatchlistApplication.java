@@ -3,6 +3,7 @@ package com.combinedwatchlist.combined_watchlist;
 import com.combinedwatchlist.combined_watchlist.movie.Movie;
 //import com.combinedwatchlist.combined_watchlist.movie.JdbcClientMovieRepository;
 import com.combinedwatchlist.combined_watchlist.movie.MovieRepository;
+import com.combinedwatchlist.combined_watchlist.movie.MovieRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -21,6 +22,19 @@ public class CombinedWatchlistApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CombinedWatchlistApplication.class, args);
+	}
+
+	@Bean
+	CommandLineRunner runner(MovieRestClient movieRestClient) {
+		return args -> {
+			log.info("CommandLineRunner running");
+			try {
+				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
+				System.out.println(movies);
+			} catch (NullPointerException e) {
+				log.error("Error occurred while searching for movies by name", e);
+			}
+		};
 	}
 
 //	/**

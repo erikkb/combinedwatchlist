@@ -1,5 +1,6 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
@@ -15,18 +16,26 @@ public class Movie {
     @Id
     private long id;
     private boolean adult;
+    @JsonProperty("backdrop_path")
     private String backdropPath;
+    @JsonProperty("genre_ids")
     private List<Integer> genreIds;
+    @JsonProperty("original_language")
     private String originalLanguage;
+    @JsonProperty("original_title")
     private String originalTitle;
     private String overview;
     private double popularity;
+    @JsonProperty("poster_path")
     private String posterPath;
+    @JsonProperty("release_date")
     private LocalDate releaseDate;
     @NotEmpty
     private String title;
     private boolean video;
+    @JsonProperty("vote_average")
     private double voteAverage;
+    @JsonProperty("vote_count")
     private int voteCount;
     //providerNames and Logos not as Pair/Tuple to make storing in database easier, can be turned into Pair in service
     private List<String> providerNames = null;
