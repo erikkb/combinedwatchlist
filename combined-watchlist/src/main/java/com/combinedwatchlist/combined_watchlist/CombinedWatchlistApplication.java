@@ -24,18 +24,18 @@ public class CombinedWatchlistApplication {
 		SpringApplication.run(CombinedWatchlistApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner runner(MovieRestClient movieRestClient) {
-		return args -> {
-			log.info("CommandLineRunner running");
-			try {
-				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
-				System.out.println(movies);
-			} catch (NullPointerException e) {
-				log.error("Error occurred while searching for movies by name", e);
-			}
-		};
-	}
+//	@Bean
+//	CommandLineRunner runner(MovieRestClient movieRestClient) {
+//		return args -> {
+//			log.info("CommandLineRunner running");
+//			try {
+//				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
+//				System.out.println(movies);
+//			} catch (NullPointerException e) {
+//				log.error("Error occurred while searching for movies by name", e);
+//			}
+//		};
+//	}
 
 //	/**
 //	 * Pre-load the database with some movies.

@@ -63,6 +63,10 @@ public class MovieService {
         return genreNames;
     }
 
+    public void deleteAll() {
+        movieRepository.deleteAll();
+    }
+
 //    List<Movie> findByGenre(String genre) {
 //        return movieRepository.findByGenre(genre);
 //    }
