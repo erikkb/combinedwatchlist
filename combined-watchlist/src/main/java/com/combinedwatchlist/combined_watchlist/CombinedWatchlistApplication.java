@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,18 +25,19 @@ public class CombinedWatchlistApplication {
 		SpringApplication.run(CombinedWatchlistApplication.class, args);
 	}
 
-//	@Bean
-//	CommandLineRunner runner(MovieRestClient movieRestClient) {
-//		return args -> {
-//			log.info("CommandLineRunner running");
-//			try {
-//				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
-//				System.out.println(movies);
-//			} catch (NullPointerException e) {
-//				log.error("Error occurred while searching for movies by name", e);
-//			}
-//		};
-//	}
+	@Bean
+	@Profile("!test")
+	CommandLineRunner runner(MovieRestClient movieRestClient) {
+		return args -> {
+			log.info("CommandLineRunner running");
+			try {
+				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
+				System.out.println(movies);
+			} catch (NullPointerException e) {
+				log.error("Error occurred while searching for movies by name", e);
+			}
+		};
+	}
 
 //	/**
 //	 * Pre-load the database with some movies.
@@ -43,6 +45,7 @@ public class CombinedWatchlistApplication {
 //	 * !!! comment out if movie table already exists in database
 //	 */
 //	@Bean
+//	@Profile("!test")
 //	CommandLineRunner runner(MovieRepository movieRepository) {
 //		return args -> {
 //			log.info("CommandLineRunner running");
