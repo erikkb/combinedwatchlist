@@ -14,6 +14,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +40,12 @@ public class CombinedWatchlistApplication {
 				System.out.println("-----------------");
 				List<Show> shows = showRestClient.searchShowsByName("Breaking Bad");
 				System.out.println(shows);
+				System.out.println("-----------------");
+				List<Pair<String, String>> providers = movieRestClient.searchProviders(862);
+				System.out.println(providers);
+				System.out.println("-----------------");
+				List<Pair<String, String>> providers2 = showRestClient.searchProviders(1396);
+				System.out.println(providers2);
 			} catch (NullPointerException e) {
 				log.error("Error occurred while searching for movies by name", e);
 			}
