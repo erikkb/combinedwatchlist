@@ -119,7 +119,7 @@ class MovieControllerTest {
 	}
 
 	@Test
-	public void shouldDeleteMovie() throws Exception {
+	void shouldDeleteMovie() throws Exception {
 		mvc.perform(delete("/api/movies/862"))
 				.andExpect(status().isNoContent());
 	}

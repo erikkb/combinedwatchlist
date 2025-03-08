@@ -4,6 +4,9 @@ import com.combinedwatchlist.combined_watchlist.movie.Movie;
 //import com.combinedwatchlist.combined_watchlist.movie.JdbcClientMovieRepository;
 import com.combinedwatchlist.combined_watchlist.movie.MovieRepository;
 import com.combinedwatchlist.combined_watchlist.movie.MovieRestClient;
+import com.combinedwatchlist.combined_watchlist.show.Show;
+import com.combinedwatchlist.combined_watchlist.show.ShowRepository;
+import com.combinedwatchlist.combined_watchlist.show.ShowRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -27,12 +30,15 @@ public class CombinedWatchlistApplication {
 
 	@Bean
 	@Profile("!test")
-	CommandLineRunner runner(MovieRestClient movieRestClient) {
+	CommandLineRunner runner(MovieRestClient movieRestClient, ShowRestClient showRestClient) {
 		return args -> {
 			log.info("CommandLineRunner running");
 			try {
 				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
 				System.out.println(movies);
+				System.out.println("-----------------");
+				List<Show> shows = showRestClient.searchShowsByName("Breaking Bad");
+				System.out.println(shows);
 			} catch (NullPointerException e) {
 				log.error("Error occurred while searching for movies by name", e);
 			}
@@ -46,7 +52,7 @@ public class CombinedWatchlistApplication {
 //	 */
 //	@Bean
 //	@Profile("!test")
-//	CommandLineRunner runner(MovieRepository movieRepository) {
+//	CommandLineRunner runner(MovieRepository movieRepository, ShowRepository showRepository) {
 //		return args -> {
 //			log.info("CommandLineRunner running");
 //			List<Movie> movies = new ArrayList<>();
@@ -75,6 +81,14 @@ public class CombinedWatchlistApplication {
 //					List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg")
 //			));
 //			movieRepository.saveAll(movies);
+//
+//			List<Show> shows = new ArrayList<>();
+//			shows.add(new Show(1, false, null, List.of(18), List.of("US"), "en", "Breaking Bad", "A high school chemistry teacher turned methamphetamine producer.", 9.5, null, LocalDate.of(2008, 1, 20), "Breaking Bad", 9.5, 15000, List.of("Netflix"), List.of("/logo1.jpg")));
+//			shows.add(new Show(2, false, null, List.of(10765), List.of("US"), "en", "Stranger Things", "A group of kids uncover a series of supernatural mysteries in their small town.", 8.8, null, LocalDate.of(2016, 7, 15), "Stranger Things", 8.8, 20000, List.of("Netflix"), List.of("/logo2.jpg")));
+//			shows.add(new Show(3, false, null, List.of(16, 35), List.of("US"), "en", "Rick and Morty", "An animated series that follows the misadventures of a scientist and his grandson.", 9.2, null, LocalDate.of(2013, 12, 2), "Rick and Morty", 9.2, 18000, List.of("Hulu"), List.of("/logo3.jpg")));
+//			shows.add(new Show(4, false, null, List.of(80, 18), List.of("US"), "en", "The Sopranos", "A mob boss tries to balance the demands of his crime family with those of his personal life.", 9.3, null, LocalDate.of(1999, 1, 10), "The Sopranos", 9.3, 12000, List.of("HBO Max"), List.of("/logo4.jpg")));
+//			shows.add(new Show(5, false, null, List.of(10759), List.of("US"), "en", "The Mandalorian", "A lone bounty hunter in the outer reaches of the galaxy.", 8.7, null, LocalDate.of(2019, 11, 12), "The Mandalorian", 8.7, 25000, List.of("Disney+"), List.of("/logo5.jpg")));
+//			showRepository.saveAll(shows);
 //		};
 //	}
 }
