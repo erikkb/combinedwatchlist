@@ -1,12 +1,15 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+/*
+Controller class returning views
+ */
+@Controller
 @RequestMapping("/api/movies")
 public class MovieController {
 
@@ -16,37 +19,17 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @GetMapping("")
-    List<Movie> findAll() {
-        return movieService.findAll();
+    @GetMapping("/search")
+    public String searchMoviesByName(@RequestParam String query, Model model) {
+        List<Movie> movies = movieService.searchMoviesByName(query);
+        model.addAttribute("movies", movies);
+        return "index";
     }
 
-    @GetMapping("/{id}")
-    Movie findById(@PathVariable long id) {
-        return movieService.findById(id);
+    @GetMapping("/watchlist")
+    public String getWatchlist(Model model) {
+        List<Movie> movies = movieService.findAll();
+        model.addAttribute("movies", movies);
+        return "moviewatchlist";
     }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("")
-    void create(@Valid @RequestBody Movie movie) {
-        movieService.save(movie);
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}")
-    void update(@Valid @RequestBody Movie movie, @PathVariable long id) {
-        movieService.update(movie, id);
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
-    void delete(@PathVariable long id) {
-        movieService.delete(id);
-    }
-
-//    @GetMapping("/genre/{genre}")
-//    List<Movie> findByGenre(@PathVariable String genre) {
-//        return movieService.findByGenre(genre);
-//    }
-
 }

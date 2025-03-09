@@ -44,9 +44,4 @@ public class ShowController {
         showService.delete(id);
     }
 
-//    @GetMapping("/genre/{genre}")
-//    List<Show> findByGenre(@PathVariable String genre) {
-//        return showService.findByGenre(genre);
-//    }
-
 }

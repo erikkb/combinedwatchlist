@@ -42,9 +42,14 @@ public class MovieRestClient {
                 .retrieve()
                 .body(JsonNode.class);
 
-        JsonNode resultsNode = response.get("results");
-        JsonNode deNode = resultsNode.get("DE");
-        JsonNode flatratesNode = deNode.get("flatrate");
+        JsonNode flatratesNode = null;
+        try {
+            JsonNode resultsNode = response.get("results");
+            JsonNode deNode = resultsNode.get("DE");
+            flatratesNode = deNode.get("flatrate");
+        } catch (NullPointerException e) {
+            return List.of(Pair.of("noProvider", "noProvider"));
+        }
 
         List<Pair<String, String>> providers = new ArrayList<>();
         if (flatratesNode != null && flatratesNode.isArray()) {

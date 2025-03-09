@@ -30,7 +30,7 @@ Integration test for the MovieController class.
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
-class MovieControllerIntTest {
+class MovieRestControllerIntTest {
 
     @LocalServerPort
     int randomServerPort;

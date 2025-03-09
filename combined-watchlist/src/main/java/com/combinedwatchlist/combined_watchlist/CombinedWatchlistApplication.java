@@ -1,7 +1,6 @@
 package com.combinedwatchlist.combined_watchlist;
 
 import com.combinedwatchlist.combined_watchlist.movie.Movie;
-//import com.combinedwatchlist.combined_watchlist.movie.JdbcClientMovieRepository;
 import com.combinedwatchlist.combined_watchlist.movie.MovieRepository;
 import com.combinedwatchlist.combined_watchlist.movie.MovieRestClient;
 import com.combinedwatchlist.combined_watchlist.show.Show;
@@ -29,28 +28,31 @@ public class CombinedWatchlistApplication {
 		SpringApplication.run(CombinedWatchlistApplication.class, args);
 	}
 
-	@Bean
-	@Profile("!test")
-	CommandLineRunner runner(MovieRestClient movieRestClient, ShowRestClient showRestClient) {
-		return args -> {
-			log.info("CommandLineRunner running");
-			try {
-				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
-				System.out.println(movies);
-				System.out.println("-----------------");
-				List<Show> shows = showRestClient.searchShowsByName("Breaking Bad");
-				System.out.println(shows);
-				System.out.println("-----------------");
-				List<Pair<String, String>> providers = movieRestClient.searchProviders(862);
-				System.out.println(providers);
-				System.out.println("-----------------");
-				List<Pair<String, String>> providers2 = showRestClient.searchProviders(1396);
-				System.out.println(providers2);
-			} catch (NullPointerException e) {
-				log.error("Error occurred while searching for movies by name", e);
-			}
-		};
-	}
+//	/**
+//	 * Test some RestClient calls
+//	 */
+//	@Bean
+//	@Profile("!test")
+//	CommandLineRunner runner(MovieRestClient movieRestClient, ShowRestClient showRestClient) {
+//		return args -> {
+//			log.info("CommandLineRunner running");
+//			try {
+//				List<Movie> movies = movieRestClient.searchMoviesByName("Toy Story");
+//				System.out.println(movies);
+//				System.out.println("-----------------");
+//				List<Show> shows = showRestClient.searchShowsByName("Breaking Bad");
+//				System.out.println(shows);
+//				System.out.println("-----------------");
+//				List<Pair<String, String>> providers = movieRestClient.searchProviders(862);
+//				System.out.println(providers);
+//				System.out.println("-----------------");
+//				List<Pair<String, String>> providers2 = showRestClient.searchProviders(1396);
+//				System.out.println(providers2);
+//			} catch (NullPointerException e) {
+//				log.error("Error occurred while searching for movies by name", e);
+//			}
+//		};
+//	}
 
 //	/**
 //	 * Pre-load the database with some movies.

@@ -12,8 +12,11 @@ public class MovieService {
 
     private final MovieRepository movieRepository;
 
-    public MovieService(MovieRepository movieRepository) {
+    private final MovieRestClient movieRestClient;
+
+    public MovieService(MovieRepository movieRepository, MovieRestClient movieRestClient) {
         this.movieRepository = movieRepository;
+        this.movieRestClient = movieRestClient;
     }
 
     public List<Movie> findAll() {
@@ -65,6 +68,14 @@ public class MovieService {
 
     public void deleteAll() {
         movieRepository.deleteAll();
+    }
+
+    List<Movie> searchMoviesByName(String movieName) {
+        return movieRestClient.searchMoviesByName(movieName);
+    }
+
+    List<Pair<String, String>> searchProviders(long movieId) {
+        return movieRestClient.searchProviders(movieId);
     }
 
 //    List<Movie> findByGenre(String genre) {
