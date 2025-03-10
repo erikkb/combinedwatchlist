@@ -39,7 +39,9 @@ public class Show {
     @JsonProperty("vote_count")
     private int voteCount;
     //providerNames and Logos not as Pair/Tuple to make storing in database easier, can be turned into Pair in service
+    @JsonProperty("provider_names")
     private List<String> providerNames = null;
+    @JsonProperty("provider_logos")
     private List<String> providerLogos = null;
     @Version
     private int version;

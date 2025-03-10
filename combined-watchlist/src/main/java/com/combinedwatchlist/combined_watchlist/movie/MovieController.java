@@ -1,15 +1,13 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import jakarta.validation.Valid;
+import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/*
-Controller class returning views
- */
-@Controller
+@RestController
 @RequestMapping("/api/movies")
 public class MovieController {
 
@@ -19,17 +17,42 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @GetMapping("/search")
-    public String searchMoviesByName(@RequestParam String query, Model model) {
-        List<Movie> movies = movieService.searchMoviesByName(query);
-        model.addAttribute("movies", movies);
-        return "index";
+    @GetMapping("")
+    List<Movie> findAll() {
+        return movieService.findAll();
     }
 
-    @GetMapping("/watchlist")
-    public String getWatchlist(Model model) {
-        List<Movie> movies = movieService.findAll();
-        model.addAttribute("movies", movies);
-        return "moviewatchlist";
+    @GetMapping("/{id}")
+    Movie findById(@PathVariable long id) {
+        return movieService.findById(id);
     }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("")
+    void create(@Valid @RequestBody Movie movie) {
+        movieService.save(movie);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{id}")
+    void update(@Valid @RequestBody Movie movie, @PathVariable long id) {
+        movieService.update(movie, id);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    void delete(@PathVariable long id) {
+        movieService.delete(id);
+    }
+
+    @GetMapping("/search")
+    List<Movie> searchMoviesByName(@RequestParam String movieName) {
+        return movieService.searchMoviesByName(movieName);
+    }
+
+    @GetMapping("/search/providers")
+    List<Pair<String, String>> searchProviders(@RequestParam Long movieId) {
+        return movieService.searchProviders(movieId);
+    }
+
 }

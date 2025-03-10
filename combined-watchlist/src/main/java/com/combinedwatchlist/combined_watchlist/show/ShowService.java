@@ -11,9 +11,11 @@ import java.util.Optional;
 public class ShowService {
 
     private final ShowRepository showRepository;
+    private final ShowRestClient showRestClient;
 
-    public ShowService(ShowRepository showRepository) {
+    public ShowService(ShowRepository showRepository, ShowRestClient showRestClient) {
         this.showRepository = showRepository;
+        this.showRestClient = showRestClient;
     }
 
     public List<Show> findAll() {
@@ -65,6 +67,14 @@ public class ShowService {
 
     public void deleteAll() {
         showRepository.deleteAll();
+    }
+
+    List<Show> searchShowsByName(String showName) {
+        return showRestClient.searchShowsByName(showName);
+    }
+
+    List<Pair<String, String>> searchProviders(long showId) {
+        return showRestClient.searchProviders(showId);
     }
 
 //    List<Show> findByGenre(String genre) {

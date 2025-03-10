@@ -1,6 +1,7 @@
 package com.combinedwatchlist.combined_watchlist.show;
 
 import jakarta.validation.Valid;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,4 +45,13 @@ public class ShowController {
         showService.delete(id);
     }
 
+    @GetMapping("/search")
+    List<Show> searchShowsByName(@RequestParam String showName) {
+        return showService.searchShowsByName(showName);
+    }
+
+    @GetMapping("/search/providers")
+    List<Pair<String, String>> searchProviders(@RequestParam Long showId) {
+        return showService.searchProviders(showId);
+    }
 }

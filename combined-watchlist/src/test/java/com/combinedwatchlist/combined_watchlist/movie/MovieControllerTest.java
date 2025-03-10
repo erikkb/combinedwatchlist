@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 Unit tests for the MovieController class.
  */
 @ActiveProfiles("test")
-@WebMvcTest(MovieRestController.class)
-class MovieRestControllerTest {
+@WebMvcTest(MovieController.class)
+class MovieControllerTest {
 
     @Autowired
     MockMvc mvc;
