@@ -12,6 +12,22 @@ $(document).ready(function() {
                     providersList.append($('<li>').text(provider));
                 });
                 movieItem.append(providersList);
+
+                // Add delete button
+                const deleteButton = $('<button>').text('Delete').click(function() {
+                    $.ajax({
+                        url: '/api/movies/' + movie.id,
+                        type: 'DELETE',
+                        success: function() {
+                            movieItem.remove();
+                        },
+                        error: function() {
+                            alert('Failed to delete movie');
+                        }
+                    });
+                });
+                movieItem.append(deleteButton);
+
                 moviesList.append(movieItem);
             });
         },
@@ -33,6 +49,22 @@ $(document).ready(function() {
                     providersList.append($('<li>').text(provider));
                 });
                 showItem.append(providersList);
+
+                // Add delete button
+                const deleteButton = $('<button>').text('Delete').click(function() {
+                    $.ajax({
+                        url: '/api/shows/' + show.id,
+                        type: 'DELETE',
+                        success: function() {
+                            showItem.remove();
+                        },
+                        error: function() {
+                            alert('Failed to delete show');
+                        }
+                    });
+                });
+                showItem.append(deleteButton);
+
                 showsList.append(showItem);
             });
         },
