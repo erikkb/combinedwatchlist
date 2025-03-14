@@ -1,3 +1,5 @@
+// todo: refactor this file to use built-in JS (fetch) instead of jQuery
+
 $(document).ready(function() {
     $('form.search-form').on('submit', function(event) {
         event.preventDefault();

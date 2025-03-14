@@ -5,10 +5,19 @@
   <title>Watchlist</title>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="/watchlistscript.js"></script>
+  <style>
+    .indent {
+      margin-left: 20px;
+    }
+    .provider-name {
+      display: block;
+    }
+  </style>
 </head>
 <body>
 <h1>Watchlist</h1>
 <a href="/">Go to Search</a>
+<button id="update-providers-button">Update Providers</button>
 <div id="movies-watchlist">
   <h2>Movies</h2>
   <ul id="movies-list"></ul>
