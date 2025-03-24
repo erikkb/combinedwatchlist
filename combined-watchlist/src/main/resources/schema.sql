@@ -1,6 +1,6 @@
-drop table if exists movie;
+-- drop table if exists movie;
 
-drop table if exists show;
+-- drop table if exists show;
 
 CREATE TABLE IF NOT EXISTS movie (
     id BIGINT NOT NULL,
