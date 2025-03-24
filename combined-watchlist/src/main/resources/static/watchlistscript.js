@@ -1,109 +1,174 @@
 // todo: refactor this file to use either fetch or ajax, not both
 
 $(document).ready(function() {
-    // Fetch movies
+    // Fetch watchlist from session
     $.ajax({
-        url: '/api/movies',
+        url: '/api/watchlist',
         type: 'GET',
-        success: function(movies) {
-            const moviesList = $('#movies-list');
-            movies.forEach(function(movie) {
-                const movieItem = $('<li>').text(movie.original_title);
-                const providersDiv = $('<div>').addClass('providers');
-                movie.provider_names.forEach(function(provider) {
-                    providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+        success: function(watchlist) {
+            const movieIds = watchlist.movie_ids;
+            const showIds = watchlist.show_ids;
+
+            // Fetch and display movies
+            movieIds.forEach(function(movieId) {
+                $.ajax({
+                    url: `/api/movies/${movieId}`,
+                    type: 'GET',
+                    success: function(movie) {
+                        const movieItem = $('<li>').text(movie.original_title);
+                        const providersDiv = $('<div>').addClass('providers');
+                        movie.provider_names.forEach(function(provider) {
+                            providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+                        });
+                        movieItem.append(providersDiv);
+
+                        // Add hidden inputs for movie fields
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_title').val(movie.original_title));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(movie.id));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(movie.adult));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(movie.backdrop_path));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(movie.genre_ids));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(movie.original_language));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(movie.overview));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(movie.popularity));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(movie.poster_path));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'release_date').val(movie.release_date));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'title').val(movie.title));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'video').val(movie.video));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(movie.vote_average));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(movie.vote_count));
+
+                        // Add delete button
+                        const deleteButton = $('<button>').text('Remove').click(function() {
+                            // Remove from DB
+                            // $.ajax({
+                            //     url: '/api/movies/' + movie.id,
+                            //     type: 'DELETE',
+                            //     success: function() {
+                            //         movieItem.remove();
+                            //     },
+                            //     error: function() {
+                            //         alert('Failed to delete movie');
+                            //     }
+                            // });
+                            // Remove from watchlist
+                            $.ajax({
+                                url: '/api/watchlist',
+                                type: 'GET',
+                                success: function(watchlist) {
+                                    const index = watchlist.movie_ids.indexOf(movie.id);
+                                    if (index > -1) {
+                                        watchlist.movie_ids.splice(index, 1);
+                                        $.ajax({
+                                            url: '/api/watchlist',
+                                            type: 'PUT',
+                                            contentType: 'application/json',
+                                            data: JSON.stringify(watchlist),
+                                            success: function() {
+                                                movieItem.remove();
+                                            },
+                                            error: function() {
+                                                alert('Failed to update watchlist');
+                                            }
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    alert('Failed to fetch watchlist');
+                                }
+                            });
+                        });
+                        movieItem.append(deleteButton.addClass('indent'));
+
+                        $('#movies-list').append(movieItem);
+                    },
+                    error: function() {
+                        alert('Failed to fetch movie');
+                    }
                 });
-                movieItem.append(providersDiv);
+            });
 
-                // Add hidden inputs for movie fields
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_title').val(movie.original_title));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(movie.id));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(movie.adult));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(movie.backdrop_path));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(movie.genre_ids));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(movie.original_language));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(movie.overview));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(movie.popularity));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(movie.poster_path));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'release_date').val(movie.release_date));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'title').val(movie.title));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'video').val(movie.video));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(movie.vote_average));
-                movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(movie.vote_count));
+            // Fetch and display shows
+            showIds.forEach(function(showId) {
+                $.ajax({
+                    url: `/api/shows/${showId}`,
+                    type: 'GET',
+                    success: function(show) {
+                        const showItem = $('<li>').text(show.original_name);
+                        const providersDiv = $('<div>').addClass('providers');
+                        show.provider_names.forEach(function(provider) {
+                            providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+                        });
+                        showItem.append(providersDiv);
 
-                // Add delete button
-                const deleteButton = $('<button>').text('Delete').click(function() {
-                    $.ajax({
-                        url: '/api/movies/' + movie.id,
-                        type: 'DELETE',
-                        success: function() {
-                            movieItem.remove();
-                        },
-                        error: function() {
-                            alert('Failed to delete movie');
-                        }
-                    });
+                        // Add hidden inputs for show fields
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_name').val(show.original_name));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(show.id));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(show.adult));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(show.backdrop_path));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(show.genre_ids));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'origin_country').val(show.origin_country));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(show.original_language));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(show.overview));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(show.popularity));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(show.poster_path));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'first_air_date').val(show.first_air_date));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'name').val(show.name));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(show.vote_average));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(show.vote_count));
+
+                        // Add delete button
+                        const deleteButton = $('<button>').text('Remove').click(function() {
+                            // Remove from DB
+                            // $.ajax({
+                            //     url: '/api/shows/' + show.id,
+                            //     type: 'DELETE',
+                            //     success: function() {
+                            //         showItem.remove();
+                            //     },
+                            //     error: function() {
+                            //         alert('Failed to delete show');
+                            //     }
+                            // });
+                            // Remove from watchlist
+                            $.ajax({
+                                url: '/api/watchlist',
+                                type: 'GET',
+                                success: function(watchlist) {
+                                    const index = watchlist.show_ids.indexOf(show.id);
+                                    if (index > -1) {
+                                        watchlist.show_ids.splice(index, 1);
+                                        $.ajax({
+                                            url: '/api/watchlist',
+                                            type: 'PUT',
+                                            contentType: 'application/json',
+                                            data: JSON.stringify(watchlist),
+                                            success: function() {
+                                                showItem.remove();
+                                            },
+                                            error: function() {
+                                                alert('Failed to update watchlist');
+                                            }
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    alert('Failed to fetch watchlist');
+                                }
+                            });
+                        });
+                        showItem.append(deleteButton.addClass('indent'));
+
+                        $('#shows-list').append(showItem);
+                    },
+                    error: function() {
+                        alert('Failed to fetch show');
+                    }
                 });
-                movieItem.append(deleteButton.addClass('indent'));
-
-                moviesList.append(movieItem);
             });
         },
-        error: function(error) {
-            alert('Failed to fetch movies');
-        }
-    });
-
-    // Fetch shows
-    $.ajax({
-        url: '/api/shows',
-        type: 'GET',
-        success: function(shows) {
-            const showsList = $('#shows-list');
-            shows.forEach(function(show) {
-                const showItem = $('<li>').text(show.original_name);
-                const providersDiv = $('<div>').addClass('providers');
-                show.provider_names.forEach(function(provider) {
-                    providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
-                });
-                showItem.append(providersDiv);
-
-                // Add hidden inputs for show fields
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_name').val(show.original_name));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(show.id));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(show.adult));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(show.backdrop_path));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(show.genre_ids));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'origin_country').val(show.origin_country));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(show.original_language));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(show.overview));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(show.popularity));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(show.poster_path));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'first_air_date').val(show.first_air_date));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'name').val(show.name));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(show.vote_average));
-                showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(show.vote_count));
-
-                // Add delete button
-                const deleteButton = $('<button>').text('Delete').click(function() {
-                    $.ajax({
-                        url: '/api/shows/' + show.id,
-                        type: 'DELETE',
-                        success: function() {
-                            showItem.remove();
-                        },
-                        error: function() {
-                            alert('Failed to delete show');
-                        }
-                    });
-                });
-                showItem.append(deleteButton.addClass('indent'));
-
-                showsList.append(showItem);
-            });
-        },
-        error: function(error) {
-            alert('Failed to fetch shows');
+        error: function() {
+            alert('Failed to fetch watchlist');
         }
     });
 
@@ -127,7 +192,7 @@ $(document).ready(function() {
 
                     const movie = {
                         id: movieId,
-                        original_title: 'it worked',
+                        original_title: item.querySelector('input[name="original_title"]').value,
                         adult: item.querySelector('input[name="adult"]').value,
                         backdrop_path: item.querySelector('input[name="backdrop_path"]').value,
                         genre_ids: item.querySelector('input[name="genre_ids"]').value.replace(/[\[\]\s]/g, '').split(',').map(Number),
@@ -161,6 +226,7 @@ $(document).ready(function() {
                             providersDiv.innerHTML = '';
                             providerNames.forEach(provider => {
                                 providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+                                // providersDiv.append($('<span>').text("hellotest").addClass('indent provider-name')[0]);
                             });
                             console.log('Movie updated successfully');
                         }
@@ -189,7 +255,7 @@ $(document).ready(function() {
                         genre_ids: item.querySelector('input[name="genre_ids"]').value.replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(Number),
                         origin_country: item.querySelector('input[name="origin_country"]').value.replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(String),
                         original_language: item.querySelector('input[name="original_language"]').value,
-                        original_name: 'it worked for show as well',
+                        original_name: item.querySelector('input[name="original_name"]').value,
                         overview: item.querySelector('input[name="overview"]').value,
                         popularity: item.querySelector('input[name="popularity"]').value,
                         poster_path: item.querySelector('input[name="poster_path"]').value,

@@ -1,4 +1,27 @@
 $(document).ready(function() {
+    // Create watchlist if it doesn't exist
+    $.ajax({
+        url: '/api/watchlist',
+        type: 'POST',
+        success: function() {
+            console.log('Watchlist created or already exists');
+        },
+        error: function(error) {
+            console.error('Failed to create watchlist', error);
+        }
+    });
+
+    // $.ajax({
+    //     url: '/api/watchlist',
+    //     type: 'GET',
+    //     success: function(watchlist) {
+    //         console.log('Watchlist:' , watchlist);
+    //     },
+    //     error: function(error) {
+    //         console.error('Failed to get watchlist', error);
+    //     }
+    // });
+
     $('form.search-form').on('submit', function(event) {
         event.preventDefault();
         const form = $(this);
@@ -87,7 +110,32 @@ $(document).ready(function() {
             url: `/api/movies/${movieId}`,
             type: 'GET',
             success: function(response) {
-                alert('Movie already exists in the database');
+                console.log('Movie already exists in the database, adding to watchlist');
+                $.ajax({
+                    url: '/api/watchlist',
+                    type: 'GET',
+                    success: function(watchlist) {
+                        console.log('Watchlist:', watchlist);
+                        if (!watchlist.movie_ids.includes(movieId)) {
+                            watchlist.movie_ids.push(movieId);
+                            $.ajax({
+                                url: '/api/watchlist',
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify(watchlist),
+                                success: function() {
+                                    console.log('Watchlist updated with new movie');
+                                },
+                                error: function(error) {
+                                    console.error('Failed to update watchlist', error);
+                                }
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Failed to fetch watchlist', error);
+                    }
+                });
             },
             error: function(error) {
                 if (error.status === 404) {
@@ -126,6 +174,32 @@ $(document).ready(function() {
                                 data: JSON.stringify(movie),
                                 success: function(response) {
                                     form.closest('li').remove();
+                                    // Add movie ID to watchlist
+                                    $.ajax({
+                                        url: '/api/watchlist',
+                                        type: 'GET',
+                                        success: function(watchlist) {
+                                            console.log('Watchlist:', watchlist);
+                                            if (!watchlist.movie_ids.includes(movieId)) {
+                                                watchlist.movie_ids.push(movieId);
+                                                $.ajax({
+                                                    url: '/api/watchlist',
+                                                    type: 'PUT',
+                                                    contentType: 'application/json',
+                                                    data: JSON.stringify(watchlist),
+                                                    success: function() {
+                                                        console.log('Watchlist updated with new movie');
+                                                    },
+                                                    error: function(error) {
+                                                        console.error('Failed to update watchlist', error);
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        error: function(error) {
+                                            console.error('Failed to fetch watchlist', error);
+                                        }
+                                    });
                                 },
                                 error: function(error) {
                                     alert('Failed to add movie');
@@ -153,7 +227,31 @@ $(document).ready(function() {
             url: `/api/shows/${showId}`,
             type: 'GET',
             success: function(response) {
-                alert('Show already exists in the database');
+                console.log('Show already exists in the database, adding to watchlist');
+                $.ajax({
+                    url: '/api/watchlist',
+                    type: 'GET',
+                    success: function(watchlist) {
+                        if (!watchlist.show_ids.includes(showId)) {
+                            watchlist.show_ids.push(showId);
+                            $.ajax({
+                                url: '/api/watchlist',
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify(watchlist),
+                                success: function() {
+                                    console.log('Watchlist updated with new show');
+                                },
+                                error: function(error) {
+                                    console.error('Failed to update watchlist', error);
+                                }
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Failed to fetch watchlist', error);
+                    }
+                });
             },
             error: function(error) {
                 if (error.status === 404) {
@@ -190,10 +288,35 @@ $(document).ready(function() {
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: JSON.stringify(show),
-                                success: function (response) {
+                                success: function(response) {
                                     form.closest('li').remove();
+                                    // Add show ID to watchlist
+                                    $.ajax({
+                                        url: '/api/watchlist',
+                                        type: 'GET',
+                                        success: function(watchlist) {
+                                            if (!watchlist.show_ids.includes(showId)) {
+                                                watchlist.show_ids.push(showId);
+                                                $.ajax({
+                                                    url: '/api/watchlist',
+                                                    type: 'PUT',
+                                                    contentType: 'application/json',
+                                                    data: JSON.stringify(watchlist),
+                                                    success: function() {
+                                                        console.log('Watchlist updated with new show');
+                                                    },
+                                                    error: function(error) {
+                                                        console.error('Failed to update watchlist', error);
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        error: function(error) {
+                                            console.error('Failed to fetch watchlist', error);
+                                        }
+                                    });
                                 },
-                                error: function (error) {
+                                error: function(error) {
                                     alert('Failed to add show');
                                 }
                             });
