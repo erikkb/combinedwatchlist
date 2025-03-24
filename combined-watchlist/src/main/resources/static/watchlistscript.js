@@ -1,4 +1,4 @@
-// todo: refactor this file to use built-in JS (fetch) instead of jQuery
+// todo: refactor this file to use either fetch or ajax, not both
 
 $(document).ready(function() {
     // Fetch movies

@@ -1,5 +1,3 @@
-// todo: refactor this file to use built-in JS (fetch) instead of jQuery
-
 $(document).ready(function() {
     $('form.search-form').on('submit', function(event) {
         event.preventDefault();
@@ -84,48 +82,63 @@ $(document).ready(function() {
         const form = $(this);
         const movieId = form.find('input[name="id"]').val();
 
+        // Check if the movie already exists in the database
         $.ajax({
-            url: '/api/movies/search/providers',
+            url: `/api/movies/${movieId}`,
             type: 'GET',
-            data: { movieId: movieId },
             success: function(response) {
-                const providerNames = response.map(function(provider) { return provider.first; });
-                const providerLogos = response.map(function(provider) { return provider.second; });
-
-                const movie = {
-                    id: movieId,
-                    original_title: form.find('input[name="original_title"]').val(),
-                    adult: form.find('input[name="adult"]').val(),
-                    backdrop_path: form.find('input[name="backdrop_path"]').val(),
-                    genre_ids: form.find('input[name="genre_ids"]').val().replace(/[\[\]\s]/g, '').split(',').map(Number),
-                    original_language: form.find('input[name="original_language"]').val(),
-                    overview: form.find('input[name="overview"]').val(),
-                    popularity: form.find('input[name="popularity"]').val(),
-                    poster_path: form.find('input[name="poster_path"]').val(),
-                    release_date: form.find('input[name="release_date"]').val(),
-                    title: form.find('input[name="title"]').val(),
-                    video: form.find('input[name="video"]').val(),
-                    vote_average: form.find('input[name="vote_average"]').val(),
-                    vote_count: form.find('input[name="vote_count"]').val(),
-                    provider_names: providerNames,
-                    provider_logos: providerLogos
-                };
-
-                $.ajax({
-                    url: '/api/movies',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(movie),
-                    success: function(response) {
-                        form.closest('li').remove();
-                    },
-                    error: function(error) {
-                        alert('Failed to add movie, it might already be in your watchlist');
-                    }
-                });
+                alert('Movie already exists in the database');
             },
             error: function(error) {
-                alert('Failed to fetch providers');
+                if (error.status === 404) {
+                    // Movie does not exist, proceed with adding the movie
+                    $.ajax({
+                        url: '/api/movies/search/providers',
+                        type: 'GET',
+                        data: { movieId: movieId },
+                        success: function(response) {
+                            const providerNames = response.map(function(provider) { return provider.first; });
+                            const providerLogos = response.map(function(provider) { return provider.second; });
+
+                            const movie = {
+                                id: movieId,
+                                original_title: form.find('input[name="original_title"]').val(),
+                                adult: form.find('input[name="adult"]').val(),
+                                backdrop_path: form.find('input[name="backdrop_path"]').val(),
+                                genre_ids: form.find('input[name="genre_ids"]').val().replace(/[\[\]\s]/g, '').split(',').map(Number),
+                                original_language: form.find('input[name="original_language"]').val(),
+                                overview: form.find('input[name="overview"]').val(),
+                                popularity: form.find('input[name="popularity"]').val(),
+                                poster_path: form.find('input[name="poster_path"]').val(),
+                                release_date: form.find('input[name="release_date"]').val(),
+                                title: form.find('input[name="title"]').val(),
+                                video: form.find('input[name="video"]').val(),
+                                vote_average: form.find('input[name="vote_average"]').val(),
+                                vote_count: form.find('input[name="vote_count"]').val(),
+                                provider_names: providerNames,
+                                provider_logos: providerLogos
+                            };
+
+                            $.ajax({
+                                url: '/api/movies',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(movie),
+                                success: function(response) {
+                                    form.closest('li').remove();
+                                },
+                                error: function(error) {
+                                    alert('Failed to add movie');
+                                }
+                            });
+                        },
+                        error: function(error) {
+                            alert('Failed to fetch providers');
+                        }
+                    });
+                } else {
+                    alert('Failed to check if movie exists');
+                }
             }
         });
     });
@@ -135,48 +148,63 @@ $(document).ready(function() {
         const form = $(this);
         const showId = form.find('input[name="id"]').val();
 
+        // Check if the movie already exists in the database
         $.ajax({
-            url: '/api/shows/search/providers',
+            url: `/api/shows/${showId}`,
             type: 'GET',
-            data: { showId: showId },
             success: function(response) {
-                const providerNames = response.map(function (provider) { return provider.first; });
-                const providerLogos = response.map(function (provider) { return provider.second; });
-
-                const show = {
-                    id: showId,
-                    adult: form.find('input[name="adult"]').val(),
-                    backdrop_path: form.find('input[name="backdrop_path"]').val(),
-                    genre_ids: form.find('input[name="genre_ids"]').val().replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(Number),
-                    origin_country: form.find('input[name="origin_country"]').val().replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(String),
-                    original_language: form.find('input[name="original_language"]').val(),
-                    original_name: form.find('input[name="original_name"]').val(),
-                    overview: form.find('input[name="overview"]').val(),
-                    popularity: form.find('input[name="popularity"]').val(),
-                    poster_path: form.find('input[name="poster_path"]').val(),
-                    first_air_date: form.find('input[name="first_air_date"]').val(),
-                    name: form.find('input[name="name"]').val(),
-                    vote_average: form.find('input[name="vote_average"]').val(),
-                    vote_count: form.find('input[name="vote_count"]').val(),
-                    provider_names: providerNames,
-                    provider_logos: providerLogos
-                };
-
-                $.ajax({
-                    url: '/api/shows',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(show),
-                    success: function (response) {
-                        form.closest('li').remove();
-                    },
-                    error: function (error) {
-                        alert('Failed to add show, it might already be in your watchlist');
-                    }
-                });
+                alert('Show already exists in the database');
             },
-            error: function (error) {
-                alert('Failed to fetch providers');
+            error: function(error) {
+                if (error.status === 404) {
+                    // Show does not exist, proceed with adding the movie
+                    $.ajax({
+                        url: '/api/shows/search/providers',
+                        type: 'GET',
+                        data: { showId: showId },
+                        success: function(response) {
+                            const providerNames = response.map(function (provider) { return provider.first; });
+                            const providerLogos = response.map(function (provider) { return provider.second; });
+
+                            const show = {
+                                id: showId,
+                                adult: form.find('input[name="adult"]').val(),
+                                backdrop_path: form.find('input[name="backdrop_path"]').val(),
+                                genre_ids: form.find('input[name="genre_ids"]').val().replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(Number),
+                                origin_country: form.find('input[name="origin_country"]').val().replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(String),
+                                original_language: form.find('input[name="original_language"]').val(),
+                                original_name: form.find('input[name="original_name"]').val(),
+                                overview: form.find('input[name="overview"]').val(),
+                                popularity: form.find('input[name="popularity"]').val(),
+                                poster_path: form.find('input[name="poster_path"]').val(),
+                                first_air_date: form.find('input[name="first_air_date"]').val(),
+                                name: form.find('input[name="name"]').val(),
+                                vote_average: form.find('input[name="vote_average"]').val(),
+                                vote_count: form.find('input[name="vote_count"]').val(),
+                                provider_names: providerNames,
+                                provider_logos: providerLogos
+                            };
+
+                            $.ajax({
+                                url: '/api/shows',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(show),
+                                success: function (response) {
+                                    form.closest('li').remove();
+                                },
+                                error: function (error) {
+                                    alert('Failed to add show');
+                                }
+                            });
+                        },
+                        error: function(error) {
+                            alert('Failed to fetch providers');
+                        }
+                    });
+                } else {
+                    alert('Failed to check if show exists');
+                }
             }
         });
     });
