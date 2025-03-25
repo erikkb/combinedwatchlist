@@ -1,4 +1,0 @@
-- full cleanup in watchlist package (unused mappings, move logic to servie layer, ...)
-
-- add user package (look into spring security)
-- add HttpSession attribute watchlist to user class

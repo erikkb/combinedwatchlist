@@ -1,5 +1,3 @@
-// todo: refactor this file to use either fetch or ajax, not both
-
 $(document).ready(function() {
     // Fetch watchlist from session
     $.ajax({
@@ -172,126 +170,128 @@ $(document).ready(function() {
         }
     });
 
-    // Update providers button click event
-    document.getElementById('update-providers-button').addEventListener('click', function() {
+// Update providers button click event
+    $('#update-providers-button').on('click', function() {
         console.log("update providers button clicked");
-        const movieItems = document.querySelectorAll('#movies-list li');
-        const showItems = document.querySelectorAll('#shows-list li');
+        const movieItems = $('#movies-list li');
+        const showItems = $('#shows-list li');
         console.log(movieItems);
         console.log(showItems);
 
-        movieItems.forEach(item => {
-            const movieId = item.querySelector('input[name="id"]').value;
+        movieItems.each(function() {
+            const item = $(this);
+            const movieId = item.find('input[name="id"]').val();
 
-            fetch(`/api/movies/search/providers?movieId=${movieId}`)
-                .then(response => response.json())
-                .then(providers => {
+            $.ajax({
+                url: `/api/movies/search/providers`,
+                type: 'GET',
+                data: { movieId: movieId },
+                success: function(providers) {
                     console.log('Movie providers fetched:', providers);
                     const providerNames = providers.map(provider => provider.first);
                     const providerLogos = providers.map(provider => provider.second);
 
                     const movie = {
                         id: movieId,
-                        original_title: item.querySelector('input[name="original_title"]').value,
-                        adult: item.querySelector('input[name="adult"]').value,
-                        backdrop_path: item.querySelector('input[name="backdrop_path"]').value,
-                        genre_ids: item.querySelector('input[name="genre_ids"]').value.replace(/[\[\]\s]/g, '').split(',').map(Number),
-                        original_language: item.querySelector('input[name="original_language"]').value,
-                        overview: item.querySelector('input[name="overview"]').value,
-                        popularity: item.querySelector('input[name="popularity"]').value,
-                        poster_path: item.querySelector('input[name="poster_path"]').value,
-                        release_date: item.querySelector('input[name="release_date"]').value,
-                        title: item.querySelector('input[name="title"]').value,
-                        video: item.querySelector('input[name="video"]').value,
-                        vote_average: item.querySelector('input[name="vote_average"]').value,
-                        vote_count: item.querySelector('input[name="vote_count"]').value,
+                        original_title: item.find('input[name="original_title"]').val(),
+                        adult: item.find('input[name="adult"]').val(),
+                        backdrop_path: item.find('input[name="backdrop_path"]').val(),
+                        genre_ids: item.find('input[name="genre_ids"]').val().replace(/[\[\]\s]/g, '').split(',').map(Number),
+                        original_language: item.find('input[name="original_language"]').val(),
+                        overview: item.find('input[name="overview"]').val(),
+                        popularity: item.find('input[name="popularity"]').val(),
+                        poster_path: item.find('input[name="poster_path"]').val(),
+                        release_date: item.find('input[name="release_date"]').val(),
+                        title: item.find('input[name="title"]').val(),
+                        video: item.find('input[name="video"]').val(),
+                        vote_average: item.find('input[name="vote_average"]').val(),
+                        vote_count: item.find('input[name="vote_count"]').val(),
                         provider_names: providerNames,
                         provider_logos: providerLogos
                     };
 
                     console.log('Updating movie:', movie);
 
-                    fetch(`/api/movies/${movieId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(movie)
-                    }).then(response => {
-                        if (!response.ok) {
-                            alert('Failed to update movie');
-                        } else {
-                            // Update the DOM with new provider names
-                            const providersDiv = item.querySelector('.providers');
-                            providersDiv.innerHTML = '';
+                    $.ajax({
+                        url: `/api/movies/${movieId}`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(movie),
+                        success: function() {
+                            const providersDiv = item.find('.providers');
+                            providersDiv.empty();
                             providerNames.forEach(provider => {
-                                providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
-                                // providersDiv.append($('<span>').text("hellotest").addClass('indent provider-name')[0]);
+                                providersDiv.append($('<span>').text(provider).addClass('indent provider-name'));
+                                // providersDiv.append($('<span>').text("hellotest").addClass('indent provider-name'));
                             });
                             console.log('Movie updated successfully');
+                        },
+                        error: function() {
+                            alert('Failed to update movie');
                         }
-                    }).catch(error => {
-                        console.error('Error updating movie:', error);
                     });
-                }).catch(error => {
-                console.error('Error fetching movie providers:', error);
+                },
+                error: function() {
+                    console.error('Error fetching movie providers');
+                }
             });
         });
 
-        showItems.forEach(item => {
-            const showId = item.querySelector('input[name="id"]').value;
+        showItems.each(function() {
+            const item = $(this);
+            const showId = item.find('input[name="id"]').val();
 
-            fetch(`/api/shows/search/providers?showId=${showId}`)
-                .then(response => response.json())
-                .then(providers => {
+            $.ajax({
+                url: `/api/shows/search/providers`,
+                type: 'GET',
+                data: { showId: showId },
+                success: function(providers) {
                     console.log('Show providers fetched:', providers);
                     const providerNames = providers.map(provider => provider.first);
                     const providerLogos = providers.map(provider => provider.second);
 
                     const show = {
                         id: showId,
-                        adult: item.querySelector('input[name="adult"]').value,
-                        backdrop_path: item.querySelector('input[name="backdrop_path"]').value,
-                        genre_ids: item.querySelector('input[name="genre_ids"]').value.replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(Number),
-                        origin_country: item.querySelector('input[name="origin_country"]').value.replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(String),
-                        original_language: item.querySelector('input[name="original_language"]').value,
-                        original_name: item.querySelector('input[name="original_name"]').value,
-                        overview: item.querySelector('input[name="overview"]').value,
-                        popularity: item.querySelector('input[name="popularity"]').value,
-                        poster_path: item.querySelector('input[name="poster_path"]').value,
-                        first_air_date: item.querySelector('input[name="first_air_date"]').value,
-                        name: item.querySelector('input[name="name"]').value,
-                        vote_average: item.querySelector('input[name="vote_average"]').value,
-                        vote_count: item.querySelector('input[name="vote_count"]').value,
+                        adult: item.find('input[name="adult"]').val(),
+                        backdrop_path: item.find('input[name="backdrop_path"]').val(),
+                        genre_ids: item.find('input[name="genre_ids"]').val().replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(Number),
+                        origin_country: item.find('input[name="origin_country"]').val().replace(/[\[\]\s]/g, '').split(',').filter(Boolean).map(String),
+                        original_language: item.find('input[name="original_language"]').val(),
+                        original_name: item.find('input[name="original_name"]').val(),
+                        overview: item.find('input[name="overview"]').val(),
+                        popularity: item.find('input[name="popularity"]').val(),
+                        poster_path: item.find('input[name="poster_path"]').val(),
+                        first_air_date: item.find('input[name="first_air_date"]').val(),
+                        name: item.find('input[name="name"]').val(),
+                        vote_average: item.find('input[name="vote_average"]').val(),
+                        vote_count: item.find('input[name="vote_count"]').val(),
                         provider_names: providerNames,
                         provider_logos: providerLogos
                     };
 
                     console.log('Updating show:', show);
 
-                    fetch(`/api/shows/${showId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(show)
-                    }).then(response => {
-                        if (!response.ok) {
-                            alert('Failed to update show');
-                        } else {
-                            // Update the DOM with new provider names
-                            const providersDiv = item.querySelector('.providers');
-                            providersDiv.innerHTML = '';
+                    $.ajax({
+                        url: `/api/shows/${showId}`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(show),
+                        success: function() {
+                            const providersDiv = item.find('.providers');
+                            providersDiv.empty();
                             providerNames.forEach(provider => {
-                                providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+                                providersDiv.append($('<span>').text(provider).addClass('indent provider-name'));
                             });
                             console.log('Show updated successfully');
+                        },
+                        error: function() {
+                            alert('Failed to update show');
                         }
-                    }).catch(error => {
-                        console.error('Error updating show:', error);
                     });
-                }).catch(error => {
-                console.error('Error fetching show providers:', error);
+                },
+                error: function() {
+                    console.error('Error fetching show providers');
+                }
             });
         });
     });

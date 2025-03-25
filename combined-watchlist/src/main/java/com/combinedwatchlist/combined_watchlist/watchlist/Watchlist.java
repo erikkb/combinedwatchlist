@@ -1,5 +1,3 @@
-// might not need fields for sessionId if spring session can handle that (maybe similar for userId)
-
 package com.combinedwatchlist.combined_watchlist.watchlist;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -81,7 +79,7 @@ public class Watchlist implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Watchlist watchlist = (Watchlist) o;
-        return getId() == watchlist.getId();
+        return Objects.equals(getId(), watchlist.getId());
     }
 
     @Override

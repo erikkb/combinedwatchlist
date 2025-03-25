@@ -11,17 +11,6 @@ $(document).ready(function() {
         }
     });
 
-    // $.ajax({
-    //     url: '/api/watchlist',
-    //     type: 'GET',
-    //     success: function(watchlist) {
-    //         console.log('Watchlist:' , watchlist);
-    //     },
-    //     error: function(error) {
-    //         console.error('Failed to get watchlist', error);
-    //     }
-    // });
-
     $('form.search-form').on('submit', function(event) {
         event.preventDefault();
         const form = $(this);
