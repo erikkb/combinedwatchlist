@@ -4,6 +4,11 @@
 
 -- drop table if exists watchlist;
 
+-- drop table if exists guest_users;
+
+-- drop table if exists spring_session_attributes;
+-- drop table if exists spring_session;
+
 CREATE TABLE IF NOT EXISTS movie (
     id BIGINT NOT NULL,
     adult BOOLEAN NOT NULL,
@@ -54,8 +59,11 @@ CREATE TABLE IF NOT EXISTS watchlist (
     PRIMARY KEY (id)
 );
 
--- drop table if exists spring_session;
--- drop table if exists spring_session_attributes;
+CREATE TABLE IF NOT EXISTS guest_users (
+    id BIGSERIAL,
+    session_id CHAR(36) NOT NULL,
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS SPRING_SESSION (
     PRIMARY_ID CHAR(36) NOT NULL,

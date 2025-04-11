@@ -1,5 +1,7 @@
 package com.combinedwatchlist.combined_watchlist.watchlist;
 
+import com.combinedwatchlist.combined_watchlist.user.GuestUser;
+import com.combinedwatchlist.combined_watchlist.user.GuestUserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,19 +12,37 @@ import java.util.*;
 public class WatchlistService {
 
     private final WatchlistRepository watchlistRepository;
+    private final GuestUserService guestUserService;
 
-    public WatchlistService(WatchlistRepository watchlistRepository) {
+    public WatchlistService(WatchlistRepository watchlistRepository, GuestUserService guestUserService) {
         this.watchlistRepository = watchlistRepository;
+        this.guestUserService = guestUserService;
     }
 
     public Watchlist getWatchlist(HttpSession session) {
-        return (Watchlist) session.getAttribute("watchlist");
+        GuestUser guestUser = guestUserService.getOrCreateGuestUser(session.getId());
+        Watchlist watchlist = (Watchlist) session.getAttribute("watchlist");
+
+        if (watchlist == null) {
+            watchlist = new Watchlist();
+            watchlist.setId(UUID.randomUUID().toString());
+            //for future: either make id of actual users (not guest) UUIDs or think of something else (if both are BIGSERIAL there might be a conflict)
+            watchlist.setUserId(guestUser.id());
+            watchlist.setMovieIds(Collections.emptyList());
+            watchlist.setShowIds(Collections.emptyList());
+            session.setAttribute("watchlist", watchlist);
+        }
+
+        return watchlist;
     }
 
     public void createWatchlist(HttpSession session) {
+        GuestUser guestUser = guestUserService.getOrCreateGuestUser(session.getId());
+
         if (session.getAttribute("watchlist") == null) {
             Watchlist watchlist = new Watchlist();
             watchlist.setId(UUID.randomUUID().toString());
+            watchlist.setUserId(guestUser.id());
             watchlist.setMovieIds(Collections.emptyList());
             watchlist.setShowIds(Collections.emptyList());
             session.setAttribute("watchlist", watchlist);
