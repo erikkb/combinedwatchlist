@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,8 @@ class SecurityConfigTest {
                 7.97,
                 18605,
                 List.of("Disney+"),
-                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg")
+                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
+                LocalDateTime.now()
         ));
         //in memory H2 default is fine for this test, replace with Testcontainers if needed
         movieService.save(movies.getFirst());

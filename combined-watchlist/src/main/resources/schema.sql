@@ -1,13 +1,9 @@
--- drop table if exists movie;
-
--- drop table if exists show;
-
--- drop table if exists watchlist;
-
--- drop table if exists guest_users;
-
--- drop table if exists spring_session_attributes;
--- drop table if exists spring_session;
+drop table if exists movie;
+drop table if exists show;
+drop table if exists watchlist;
+drop table if exists guest_users;
+drop table if exists spring_session_attributes;
+drop table if exists spring_session;
 
 CREATE TABLE IF NOT EXISTS movie (
     id BIGINT NOT NULL,
@@ -26,6 +22,7 @@ CREATE TABLE IF NOT EXISTS movie (
     vote_count INT,
     provider_names VARCHAR(255)[],
     provider_logos VARCHAR(255)[],
+    providerinfo_lastupdate TIMESTAMP,
     version INT,
     PRIMARY KEY (id)
 );
@@ -47,6 +44,7 @@ CREATE TABLE IF NOT EXISTS show (
     vote_count INT,
     provider_names VARCHAR(255)[],
     provider_logos VARCHAR(255)[],
+    providerinfo_lastupdate TIMESTAMP,
     version INT,
     PRIMARY KEY (id)
 );

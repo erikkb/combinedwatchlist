@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +45,9 @@ public class Show {
     private List<String> providerNames = null;
     @JsonProperty("provider_logos")
     private List<String> providerLogos = null;
+    @Column("providerinfo_lastupdate")
+    @JsonProperty("providerinfo_lastupdate")
+    private LocalDateTime providerInfoLastUpdate = null;
     @Version
     private int version;
 
@@ -66,7 +71,7 @@ public class Show {
         this.voteCount = voteCount;
     }
 
-    public Show(long id, boolean adult, String backdropPath, List<Integer> genreIds, List<String> originCountry, String originalLanguage, String originalName, String overview, double popularity, String posterPath, LocalDate firstAirDate, String name, double voteAverage, int voteCount, List<String> providerNames, List<String> providerLogos) {
+    public Show(long id, boolean adult, String backdropPath, List<Integer> genreIds, List<String> originCountry, String originalLanguage, String originalName, String overview, double popularity, String posterPath, LocalDate firstAirDate, String name, double voteAverage, int voteCount, List<String> providerNames, List<String> providerLogos, LocalDateTime providerInfoLastUpdate) {
         this.id = id;
         this.adult = adult;
         this.backdropPath = backdropPath;
@@ -83,6 +88,7 @@ public class Show {
         this.voteCount = voteCount;
         this.providerNames = providerNames;
         this.providerLogos = providerLogos;
+        this.providerInfoLastUpdate = providerInfoLastUpdate;
     }
 
     public long getId() {
@@ -219,6 +225,14 @@ public class Show {
 
     public void addProviderLogo(String providerLogo) {
         this.providerLogos.add(providerLogo);
+    }
+
+    public LocalDateTime getProviderInfoLastUpdate() {
+        return providerInfoLastUpdate;
+    }
+
+    public void setProviderInfoLastUpdate(LocalDateTime providerInfoLastUpdate) {
+        this.providerInfoLastUpdate = providerInfoLastUpdate;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -51,7 +52,7 @@ public class MovieController {
     }
 
     @GetMapping("/search/providers")
-    List<Pair<String, String>> searchProviders(@RequestParam Long movieId) {
+    Pair<List<Pair<String, String>>, LocalDateTime> searchProviders(@RequestParam Long movieId) {
         return movieService.searchProviders(movieId);
     }
 

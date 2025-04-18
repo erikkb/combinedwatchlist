@@ -1,3 +1,5 @@
+//placeholder frontend, just making it work for now -> replace with react frontend later
+
 $(document).ready(function() {
     // Create watchlist if it doesn't exist
     $.ajax({
@@ -105,8 +107,8 @@ $(document).ready(function() {
                     type: 'GET',
                     success: function(watchlist) {
                         console.log('Watchlist:', watchlist);
-                        if (!watchlist.movie_ids.includes(movieId)) {
-                            watchlist.movie_ids.push(movieId);
+                        if (!watchlist.movie_ids.includes(Number(movieId))) {
+                            watchlist.movie_ids.push(Number(movieId));
                             $.ajax({
                                 url: '/api/watchlist',
                                 type: 'PUT',
@@ -119,6 +121,8 @@ $(document).ready(function() {
                                     console.error('Failed to update watchlist', error);
                                 }
                             });
+                        } else {
+                            alert("Movie already in watchlist");
                         }
                     },
                     error: function(error) {
@@ -134,8 +138,13 @@ $(document).ready(function() {
                         type: 'GET',
                         data: { movieId: movieId },
                         success: function(response) {
-                            const providerNames = response.map(function(provider) { return provider.first; });
-                            const providerLogos = response.map(function(provider) { return provider.second; });
+                            console.log('Movie providers fetched:', response);
+
+                            const providers = response.first; // This is the List<Pair<String, String>>
+                            const providerInfoLastUpdate = response.second; // This is the LocalDateTime
+
+                            const providerNames = providers.map(provider => provider.first);
+                            const providerLogos = providers.map(provider => provider.second);
 
                             const movie = {
                                 id: movieId,
@@ -153,7 +162,8 @@ $(document).ready(function() {
                                 vote_average: form.find('input[name="vote_average"]').val(),
                                 vote_count: form.find('input[name="vote_count"]').val(),
                                 provider_names: providerNames,
-                                provider_logos: providerLogos
+                                provider_logos: providerLogos,
+                                providerinfo_lastupdate: providerInfoLastUpdate
                             };
 
                             $.ajax({
@@ -195,8 +205,12 @@ $(document).ready(function() {
                                 }
                             });
                         },
-                        error: function(error) {
-                            alert('Failed to fetch providers');
+                        error: function(xhr) {
+                            if (xhr.status === 400) {
+                                console.log('Provider info was updated less than 24 hours ago for movie:' + movieId);
+                            } else {
+                                console.error('Error fetching movie providers', xhr.status, xhr.responseText);
+                            }
                         }
                     });
                 } else {
@@ -221,8 +235,8 @@ $(document).ready(function() {
                     url: '/api/watchlist',
                     type: 'GET',
                     success: function(watchlist) {
-                        if (!watchlist.show_ids.includes(showId)) {
-                            watchlist.show_ids.push(showId);
+                        if (!watchlist.show_ids.includes(Number(showId))) {
+                            watchlist.show_ids.push(Number(showId));
                             $.ajax({
                                 url: '/api/watchlist',
                                 type: 'PUT',
@@ -235,6 +249,8 @@ $(document).ready(function() {
                                     console.error('Failed to update watchlist', error);
                                 }
                             });
+                        } else {
+                            alert("Show already in watchlist");
                         }
                     },
                     error: function(error) {
@@ -250,8 +266,13 @@ $(document).ready(function() {
                         type: 'GET',
                         data: { showId: showId },
                         success: function(response) {
-                            const providerNames = response.map(function (provider) { return provider.first; });
-                            const providerLogos = response.map(function (provider) { return provider.second; });
+                            console.log('Show providers fetched:', response);
+
+                            const providers = response.first; // This is the List<Pair<String, String>>
+                            const providerInfoLastUpdate = response.second; // This is the LocalDateTime
+
+                            const providerNames = providers.map(provider => provider.first);
+                            const providerLogos = providers.map(provider => provider.second);
 
                             const show = {
                                 id: showId,
@@ -269,7 +290,8 @@ $(document).ready(function() {
                                 vote_average: form.find('input[name="vote_average"]').val(),
                                 vote_count: form.find('input[name="vote_count"]').val(),
                                 provider_names: providerNames,
-                                provider_logos: providerLogos
+                                provider_logos: providerLogos,
+                                providerinfo_lastupdate: providerInfoLastUpdate
                             };
 
                             $.ajax({
@@ -310,8 +332,12 @@ $(document).ready(function() {
                                 }
                             });
                         },
-                        error: function(error) {
-                            alert('Failed to fetch providers');
+                        error: function(xhr) {
+                            if (xhr.status === 400) {
+                                console.log('Provider info was updated less than 24 hours ago for show:' + showId);
+                            } else {
+                                console.error('Error fetching show providers');
+                            }
                         }
                     });
                 } else {

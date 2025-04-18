@@ -1,8 +1,13 @@
 package com.combinedwatchlist.combined_watchlist.show;
 
+import com.combinedwatchlist.combined_watchlist.movie.Movie;
+import com.combinedwatchlist.combined_watchlist.movie.MovieNotFoundException;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -73,8 +78,21 @@ public class ShowService {
         return showRestClient.searchShowsByName(showName);
     }
 
-    List<Pair<String, String>> searchProviders(long showId) {
-        return showRestClient.searchProviders(showId);
+    Pair<List<Pair<String, String>>, LocalDateTime> searchProviders(long showId) {
+        Show show = null;
+        try {
+            show = findById(showId);
+            if (show.getProviderInfoLastUpdate() != null && show.getProviderInfoLastUpdate().isAfter(LocalDateTime.now().minusHours(24))) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provider info was updated less than 24 hours ago.");
+            }
+        } catch (ShowNotFoundException e) {
+            // Log the exception or handle it as needed
+            System.out.println("Show not found in searchProviders(): " + e.getMessage());
+        }
+
+        // Fetch new provider info from the API
+        List<Pair<String, String>> providers = showRestClient.searchProviders(showId);
+        return Pair.of(providers, LocalDateTime.now());
     }
 
 //    List<Show> findByGenre(String genre) {

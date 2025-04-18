@@ -6,11 +6,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,19 +32,31 @@ Unit tests for the ShowController class.
 @WebMvcTest(ShowController.class)
 class ShowControllerTest {
 
+    @Configuration
+    static class TestSecurityConfig {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            http.csrf(csrf -> csrf.disable())
+                    .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+            return http.build();
+        }
+    }
+
     @Autowired
     MockMvc mvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
+    @MockitoBean
     ShowService showService;
+
 
     private final List<Show> shows = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
+        showService.deleteAll();
         shows.add(new Show(
                 1396,
                 false,
@@ -55,8 +73,10 @@ class ShowControllerTest {
                 8.9,
                 15151,
                 List.of("Disney+"),
-                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg")
+                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
+                LocalDateTime.now()
         ));
+        showService.save(shows.getFirst());
     }
 
     @Test
@@ -138,7 +158,8 @@ class ShowControllerTest {
                 8.9,
                 15151,
                 List.of("Disney+"),
-                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg")
+                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
+                LocalDateTime.now()
         );
         mvc.perform(put("/api/shows/1396")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,3 +1,5 @@
+//placeholder frontend, just making it work for now -> replace with react frontend later
+
 $(document).ready(function() {
     // Fetch watchlist from session
     $.ajax({
@@ -13,7 +15,17 @@ $(document).ready(function() {
                     url: `/api/movies/${movieId}`,
                     type: 'GET',
                     success: function(movie) {
-                        const movieItem = $('<li>').text(movie.original_title);
+                        const providerInfoLastUpdate = new Date(movie.providerinfo_lastupdate);
+                        const currentTime = new Date();
+                        const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+
+                        const movieItem = $('<li>');
+                        const mainText = isOlderThan24Hours
+                            ? $('<span>').text(movie.original_title + " (provider information older than 24 hours, update suggested)").css('color', 'red')
+                            : $('<span>').text(movie.original_title);
+
+                        movieItem.append(mainText)
+
                         const providersDiv = $('<div>').addClass('providers');
                         movie.provider_names.forEach(function(provider) {
                             providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
@@ -35,6 +47,7 @@ $(document).ready(function() {
                         movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'video').val(movie.video));
                         movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(movie.vote_average));
                         movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(movie.vote_count));
+                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(movie.providerinfo_lastupdate));
 
                         // Add delete button
                         const deleteButton = $('<button>').text('Remove').click(function() {
@@ -92,7 +105,17 @@ $(document).ready(function() {
                     url: `/api/shows/${showId}`,
                     type: 'GET',
                     success: function(show) {
-                        const showItem = $('<li>').text(show.original_name);
+                        const providerInfoLastUpdate = new Date(show.providerinfo_lastupdate);
+                        const currentTime = new Date();
+                        const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+
+                        const showItem = $('<li>');
+                        const mainText = isOlderThan24Hours
+                            ? $('<span>').text(show.original_name + " (provider information older than 24 hours, update suggested)").css('color', 'red')
+                            : $('<span>').text(show.original_name);
+
+                        showItem.append(mainText);
+
                         const providersDiv = $('<div>').addClass('providers');
                         show.provider_names.forEach(function(provider) {
                             providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
@@ -114,6 +137,7 @@ $(document).ready(function() {
                         showItem.append($('<input>').attr('type', 'hidden').attr('name', 'name').val(show.name));
                         showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(show.vote_average));
                         showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(show.vote_count));
+                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(show.providerinfo_lastupdate));
 
                         // Add delete button
                         const deleteButton = $('<button>').text('Remove').click(function() {
@@ -186,8 +210,12 @@ $(document).ready(function() {
                 url: `/api/movies/search/providers`,
                 type: 'GET',
                 data: { movieId: movieId },
-                success: function(providers) {
-                    console.log('Movie providers fetched:', providers);
+                success: function(response) {
+                    console.log('Movie providers fetched:', response);
+
+                    const providers = response.first; // This is the List<Pair<String, String>>
+                    const providerInfoLastUpdate = response.second; // This is the LocalDateTime
+
                     const providerNames = providers.map(provider => provider.first);
                     const providerLogos = providers.map(provider => provider.second);
 
@@ -207,7 +235,8 @@ $(document).ready(function() {
                         vote_average: item.find('input[name="vote_average"]').val(),
                         vote_count: item.find('input[name="vote_count"]').val(),
                         provider_names: providerNames,
-                        provider_logos: providerLogos
+                        provider_logos: providerLogos,
+                        providerinfo_lastupdate: providerInfoLastUpdate
                     };
 
                     console.log('Updating movie:', movie);
@@ -231,8 +260,12 @@ $(document).ready(function() {
                         }
                     });
                 },
-                error: function() {
-                    console.error('Error fetching movie providers');
+                error: function(xhr) {
+                    if (xhr.status === 400) {
+                        console.log('Provider info was updated less than 24 hours ago for movie:' + movieId);
+                    } else {
+                        console.error('Error fetching movie providers');
+                    }
                 }
             });
         });
@@ -245,8 +278,12 @@ $(document).ready(function() {
                 url: `/api/shows/search/providers`,
                 type: 'GET',
                 data: { showId: showId },
-                success: function(providers) {
-                    console.log('Show providers fetched:', providers);
+                success: function(response) {
+                    console.log('Show providers fetched:', response);
+
+                    const providers = response.first; // This is the List<Pair<String, String>>
+                    const providerInfoLastUpdate = response.second; // This is the LocalDateTime
+
                     const providerNames = providers.map(provider => provider.first);
                     const providerLogos = providers.map(provider => provider.second);
 
@@ -266,7 +303,8 @@ $(document).ready(function() {
                         vote_average: item.find('input[name="vote_average"]').val(),
                         vote_count: item.find('input[name="vote_count"]').val(),
                         provider_names: providerNames,
-                        provider_logos: providerLogos
+                        provider_logos: providerLogos,
+                        providerinfo_lastupdate: providerInfoLastUpdate
                     };
 
                     console.log('Updating show:', show);
@@ -289,8 +327,12 @@ $(document).ready(function() {
                         }
                     });
                 },
-                error: function() {
-                    console.error('Error fetching show providers');
+                error: function(xhr) {
+                    if (xhr.status === 400) {
+                        console.log('Provider info was updated less than 24 hours ago for show:' + showId);
+                    } else {
+                        console.error('Error fetching show providers');
+                    }
                 }
             });
         });
