@@ -17,7 +17,7 @@ public class Watchlist implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private String id;
+    private long id;
     @JsonProperty("user_id")
     private long userId;
     @JsonProperty("movie_ids")
@@ -28,18 +28,18 @@ public class Watchlist implements Serializable {
     public Watchlist() {
     }
 
-    public Watchlist(String id, long userId, List<Long> movieIds, List<Long> showIds) {
+    public Watchlist(long id, long userId, List<Long> movieIds, List<Long> showIds) {
         this.id = id;
         this.userId = userId;
         this.movieIds = movieIds != null ? movieIds : new ArrayList<>();
         this.showIds = showIds != null ? showIds : new ArrayList<>();
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

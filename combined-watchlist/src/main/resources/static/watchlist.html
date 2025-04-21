@@ -43,6 +43,31 @@
   </style>
 </head>
 <body>
+
+<div style="text-align: right; padding: 10px;" id="user-status">
+  <!-- Will be filled by JS -->
+</div>
+<div id="auth-forms" style="padding: 10px; border: 1px solid #ccc; margin-bottom: 10px;">
+  <div id="login-form" style="display: none; margin-bottom: 10px;">
+    <h3>Login</h3>
+    <form id="login">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <div id="register-form" style="display: none;">
+    <h3>Register</h3>
+    <form id="register">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <input type="email" name="email" placeholder="Email (optional)">
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</div>
+
 <h1>Watchlist</h1>
 <a href="/">Go to Search</a>
 

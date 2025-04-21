@@ -25,7 +25,7 @@ public class WatchlistService {
 
         if (watchlist == null) {
             watchlist = new Watchlist();
-            watchlist.setId(UUID.randomUUID().toString());
+//            watchlist.setId(UUID.randomUUID().toString());
             //for future: either make id of actual users (not guest) UUIDs or think of something else (if both are BIGSERIAL there might be a conflict)
             watchlist.setUserId(guestUser.id());
             watchlist.setMovieIds(Collections.emptyList());
@@ -41,7 +41,8 @@ public class WatchlistService {
 
         if (session.getAttribute("watchlist") == null) {
             Watchlist watchlist = new Watchlist();
-            watchlist.setId(UUID.randomUUID().toString());
+            // Don't set ID — not needed for session attribute and would cause issues when migrating to DB
+//            watchlist.setId(UUID.randomUUID().toString());
             watchlist.setUserId(guestUser.id());
             watchlist.setMovieIds(Collections.emptyList());
             watchlist.setShowIds(Collections.emptyList());
@@ -67,7 +68,7 @@ public class WatchlistService {
         return watchlist.get();
     }
 
-    public Watchlist findById(String id) {
+    public Watchlist findById(long id) {
         Optional<Watchlist> watchlist = watchlistRepository.findById(id);
         if (watchlist.isEmpty()) {
             throw new WatchlistNotFoundException("Watchlist with id " + id + " not found");
@@ -79,13 +80,28 @@ public class WatchlistService {
         watchlistRepository.save(watchlist);
     }
 
-    public void delete(String id) {watchlistRepository.delete(findById(id));}
+    public void delete(long id) {watchlistRepository.delete(findById(id));}
 
     //works for now as workaround to the error with updating via save() stating that the id already exists (something with sequence?)
-    public void update(Watchlist watchlist, String id) {
-        if(id.equals(watchlist.getId())) {
-            delete(id);
+    public void update(Watchlist watchlist, long id) {
+        if(id == watchlist.getId()) {
+//            delete(id);
             save(watchlist);
         }
+    }
+
+    public void migrateGuestWatchlistToUser(HttpSession session, Long userId) {
+        Watchlist guestWatchlist = (Watchlist) session.getAttribute("watchlist");
+
+        if (guestWatchlist == null) {
+            throw new IllegalStateException("Expected watchlist in session, but found none.");
+        }
+
+        // Update the guest watchlist with the real user ID and save it
+        guestWatchlist.setUserId(userId);
+
+        watchlistRepository.save(guestWatchlist);
+
+        session.removeAttribute("watchlist");
     }
 }

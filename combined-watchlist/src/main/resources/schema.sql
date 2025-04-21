@@ -2,8 +2,19 @@ drop table if exists movie;
 drop table if exists show;
 drop table if exists watchlist;
 drop table if exists guest_users;
+drop table if exists users;
 drop table if exists spring_session_attributes;
 drop table if exists spring_session;
+
+CREATE TABLE IF NOT EXISTS users (
+    id BIGSERIAL,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    role VARCHAR(255),
+    PRIMARY KEY (id)
+);
+
 
 CREATE TABLE IF NOT EXISTS movie (
     id BIGINT NOT NULL,
@@ -50,7 +61,7 @@ CREATE TABLE IF NOT EXISTS show (
 );
 
 CREATE TABLE IF NOT EXISTS watchlist (
-    id VARCHAR(36) NOT NULL,
+    id BIGSERIAL NOT NULL,
     user_id BIGINT,
     movie_ids BIGINT[],
     show_ids BIGINT[],

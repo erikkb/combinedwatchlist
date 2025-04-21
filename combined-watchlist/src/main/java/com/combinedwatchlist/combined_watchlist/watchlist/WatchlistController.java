@@ -39,16 +39,16 @@ public class WatchlistController {
     }
 
     @GetMapping("/{id}")
-    Watchlist getWatchlistById(@PathVariable String id) { return watchlistService.findById(id);}
+    Watchlist getWatchlistById(@PathVariable long id) { return watchlistService.findById(id);}
 
     @GetMapping("/user/{id}")
     Watchlist getWatchlistByUserId(@PathVariable long id) { return watchlistService.findByUserId(id);}
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    void update(@RequestBody Watchlist watchlist, String id) {watchlistService.update(watchlist, id);}
+    void update(@RequestBody Watchlist watchlist,  @PathVariable long id) {watchlistService.update(watchlist, id);}
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    void delete(@PathVariable String id) {watchlistService.delete(id);}
+    void delete(@PathVariable long id) {watchlistService.delete(id);}
 }

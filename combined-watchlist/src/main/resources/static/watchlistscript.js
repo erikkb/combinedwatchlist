@@ -1,191 +1,298 @@
 //placeholder frontend, just making it work for now -> replace with react frontend later
 
 $(document).ready(function() {
-    // Fetch watchlist from session
-    $.ajax({
-        url: '/api/watchlist',
-        type: 'GET',
-        success: function(watchlist) {
-            const movieIds = watchlist.movie_ids;
-            const showIds = watchlist.show_ids;
+    $('#login-form').hide();
+    $('#register-form').hide();
 
-            // Fetch and display movies
-            movieIds.forEach(function(movieId) {
-                $.ajax({
-                    url: `/api/movies/${movieId}`,
-                    type: 'GET',
-                    success: function(movie) {
-                        const providerInfoLastUpdate = new Date(movie.providerinfo_lastupdate);
-                        const currentTime = new Date();
-                        const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+    window.currentUser = null;
 
-                        const movieItem = $('<li>');
-                        const mainText = isOlderThan24Hours
-                            ? $('<span>').text(movie.original_title + " (provider information older than 24 hours, update suggested)").css('color', 'red')
-                            : $('<span>').text(movie.original_title);
+    function setUserStatus(loggedIn, user) {
+        const statusDiv = $('#user-status');
+        statusDiv.empty();
 
-                        movieItem.append(mainText)
+        if (loggedIn) {
+            window.currentUser = user;
+            statusDiv.append(`<span>Logged in as: <strong>${user.username}</strong></span>`);
+            statusDiv.append(` <button id="logout-btn">Logout</button>`);
 
-                        const providersDiv = $('<div>').addClass('providers');
-                        movie.provider_names.forEach(function(provider) {
-                            providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
-                        });
-                        movieItem.append(providersDiv);
-
-                        // Add hidden inputs for movie fields
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_title').val(movie.original_title));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(movie.id));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(movie.adult));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(movie.backdrop_path));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(movie.genre_ids));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(movie.original_language));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(movie.overview));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(movie.popularity));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(movie.poster_path));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'release_date').val(movie.release_date));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'title').val(movie.title));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'video').val(movie.video));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(movie.vote_average));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(movie.vote_count));
-                        movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(movie.providerinfo_lastupdate));
-
-                        // Add delete button
-                        const deleteButton = $('<button>').text('Remove').click(function() {
-                            // Remove from DB
-                            // $.ajax({
-                            //     url: '/api/movies/' + movie.id,
-                            //     type: 'DELETE',
-                            //     success: function() {
-                            //         movieItem.remove();
-                            //     },
-                            //     error: function() {
-                            //         alert('Failed to delete movie');
-                            //     }
-                            // });
-                            // Remove from watchlist
-                            $.ajax({
-                                url: '/api/watchlist',
-                                type: 'GET',
-                                success: function(watchlist) {
-                                    const index = watchlist.movie_ids.indexOf(movie.id);
-                                    if (index > -1) {
-                                        watchlist.movie_ids.splice(index, 1);
-                                        $.ajax({
-                                            url: '/api/watchlist',
-                                            type: 'PUT',
-                                            contentType: 'application/json',
-                                            data: JSON.stringify(watchlist),
-                                            success: function() {
-                                                movieItem.remove();
-                                            },
-                                            error: function() {
-                                                alert('Failed to update watchlist');
-                                            }
-                                        });
-                                    }
-                                },
-                                error: function() {
-                                    alert('Failed to fetch watchlist');
-                                }
-                            });
-                        });
-                        movieItem.append(deleteButton.addClass('indent'));
-
-                        $('#movies-list').append(movieItem);
-                    },
-                    error: function() {
-                        alert('Failed to fetch movie');
-                    }
+            $('#logout-btn').on('click', function () {
+                $.post('/api/users/logout', function () {
+                    location.reload();
                 });
             });
+            $('#auth-forms').hide();
+        } else {
+            window.currentUser = null;
+            statusDiv.append(`<span>Logged in as: <strong>Guest</strong></span>`);
+            statusDiv.append(`<button id="login-btn">Login</button>`);
+            statusDiv.append(`<button id="register-btn">Register</button>`);
 
-            // Fetch and display shows
-            showIds.forEach(function(showId) {
-                $.ajax({
-                    url: `/api/shows/${showId}`,
-                    type: 'GET',
-                    success: function(show) {
-                        const providerInfoLastUpdate = new Date(show.providerinfo_lastupdate);
-                        const currentTime = new Date();
-                        const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+            $('#login-btn').on('click', function () {
+                console.log("Login button clicked");
+                $('#register-form').hide(); // hide other
+                $('#login-form').toggle();  // toggle this
+            });
+            $('#register-btn').on('click', function () {
+                $('#login-form').hide(); // hide other
+                $('#register-form').toggle(); // toggle this
+            });
+        }
+    }
 
-                        const showItem = $('<li>');
-                        const mainText = isOlderThan24Hours
-                            ? $('<span>').text(show.original_name + " (provider information older than 24 hours, update suggested)").css('color', 'red')
-                            : $('<span>').text(show.original_name);
+    // Detect login status
+    $.ajax({
+        url: '/api/users/me',
+        type: 'GET',
+        success: function (data) {
+            setUserStatus(true, data);
+            fetchWatchlist(false, data.userId);
+        },
+        error: function () {
+            setUserStatus(false, null);
+            fetchWatchlist(true, null);
+        }
+    });
 
-                        showItem.append(mainText);
+    $('#login').on('submit', function (e) {
+        e.preventDefault();
+        const formData = $(this).serialize(); // encodes username=...&password=...
 
-                        const providersDiv = $('<div>').addClass('providers');
-                        show.provider_names.forEach(function(provider) {
-                            providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
-                        });
-                        showItem.append(providersDiv);
+        $.ajax({
+            url: '/api/users/login',
+            type: 'POST',
+            data: formData,
+            success: function () {
+                location.reload();
+            },
+            error: function () {
+                alert('Login failed. Please check your credentials.');
+            }
+        });
+    });
 
-                        // Add hidden inputs for show fields
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_name').val(show.original_name));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(show.id));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(show.adult));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(show.backdrop_path));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(show.genre_ids));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'origin_country').val(show.origin_country));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(show.original_language));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(show.overview));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(show.popularity));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(show.poster_path));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'first_air_date').val(show.first_air_date));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'name').val(show.name));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(show.vote_average));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(show.vote_count));
-                        showItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(show.providerinfo_lastupdate));
+    $('#register').on('submit', function (e) {
+        e.preventDefault();
 
-                        // Add delete button
-                        const deleteButton = $('<button>').text('Remove').click(function() {
-                            // Remove from DB
-                            // $.ajax({
-                            //     url: '/api/shows/' + show.id,
-                            //     type: 'DELETE',
-                            //     success: function() {
-                            //         showItem.remove();
-                            //     },
-                            //     error: function() {
-                            //         alert('Failed to delete show');
-                            //     }
-                            // });
-                            // Remove from watchlist
-                            $.ajax({
-                                url: '/api/watchlist',
-                                type: 'GET',
-                                success: function(watchlist) {
-                                    const index = watchlist.show_ids.indexOf(show.id);
-                                    if (index > -1) {
-                                        watchlist.show_ids.splice(index, 1);
-                                        $.ajax({
-                                            url: '/api/watchlist',
-                                            type: 'PUT',
-                                            contentType: 'application/json',
-                                            data: JSON.stringify(watchlist),
-                                            success: function() {
-                                                showItem.remove();
-                                            },
-                                            error: function() {
-                                                alert('Failed to update watchlist');
-                                            }
-                                        });
-                                    }
-                                },
-                                error: function() {
-                                    alert('Failed to fetch watchlist');
-                                }
-                            });
-                        });
-                        showItem.append(deleteButton.addClass('indent'));
+        const payload = {
+            username: $('#register input[name="username"]').val(),
+            password: $('#register input[name="password"]').val(),
+            email: $('#register input[name="email"]').val() || null
+        };
 
-                        $('#shows-list').append(showItem);
-                    },
-                    error: function() {
-                        alert('Failed to fetch show');
+        $.ajax({
+            url: '/api/users/register',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function () {
+                alert('Registration successful! You are now logged in.');
+                location.reload();
+            },
+            error: function (xhr) {
+                let errorMessage = 'Registration failed';
+                if (xhr.responseText) {
+                    try {
+                        const json = JSON.parse(xhr.responseText);
+                        errorMessage = json.error || errorMessage;
+                    } catch (e) {
+                        // Not valid JSON — keep default error message
                     }
+                }
+                alert(errorMessage);
+            }
+        });
+    });
+
+    function fetchWatchlist(isGuest, userId) {
+        const getUrl = isGuest ? '/api/watchlist' : `/api/watchlist/user/${userId}`;
+
+        $.ajax({
+            url: getUrl,
+            type: 'GET',
+            success: function(watchlist) {
+                const putUrl = isGuest ? '/api/watchlist' : `/api/watchlist/${watchlist.id}`;
+                console.log('PUT URL:', putUrl);
+
+                const movieIds = watchlist.movie_ids;
+                const showIds = watchlist.show_ids;
+
+                // Fetch and display movies
+                movieIds.forEach(function(movieId) {
+                    $.ajax({
+                        url: `/api/movies/${movieId}`,
+                        type: 'GET',
+                        success: function(movie) {
+                            const providerInfoLastUpdate = new Date(movie.providerinfo_lastupdate);
+                            const currentTime = new Date();
+                            const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+
+                            const movieItem = $('<li>');
+                            const mainText = isOlderThan24Hours
+                                ? $('<span>').text(movie.original_title + " (provider information older than 24 hours, update suggested)").css('color', 'red')
+                                : $('<span>').text(movie.original_title);
+
+                            movieItem.append(mainText)
+
+                            const providersDiv = $('<div>').addClass('providers');
+                            movie.provider_names.forEach(function(provider) {
+                                providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+                            });
+                            movieItem.append(providersDiv);
+
+                            // Add hidden inputs for movie fields
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_title').val(movie.original_title));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(movie.id));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(movie.adult));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(movie.backdrop_path));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(movie.genre_ids));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(movie.original_language));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(movie.overview));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(movie.popularity));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(movie.poster_path));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'release_date').val(movie.release_date));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'title').val(movie.title));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'video').val(movie.video));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(movie.vote_average));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(movie.vote_count));
+                            movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(movie.providerinfo_lastupdate));
+
+                            // Add delete button
+                            const deleteButton = $('<button>').text('Remove').click(function() {
+                                // Remove from DB
+                                // $.ajax({
+                                //     url: '/api/movies/' + movie.id,
+                                //     type: 'DELETE',
+                                //     success: function() {
+                                //         movieItem.remove();
+                                //     },
+                                //     error: function() {
+                                //         alert('Failed to delete movie');
+                                //     }
+                                // });
+                                // Remove from watchlist
+                                $.ajax({
+                                    url: getUrl,
+                                    type: 'GET',
+                                    success: function(watchlist) {
+                                        const index = watchlist.movie_ids.indexOf(movie.id);
+                                        if (index > -1) {
+                                            watchlist.movie_ids.splice(index, 1);
+                                            $.ajax({
+                                                url: putUrl,
+                                                type: 'PUT',
+                                                contentType: 'application/json',
+                                                data: JSON.stringify(watchlist),
+                                                success: function() {
+                                                    movieItem.remove();
+                                                },
+                                                error: function() {
+                                                    alert('Failed to update watchlist');
+                                                }
+                                            });
+                                        }
+                                    },
+                                    error: function() {
+                                        alert('Failed to fetch watchlist');
+                                    }
+                                });
+                            });
+                            movieItem.append(deleteButton.addClass('indent'));
+
+                            $('#movies-list').append(movieItem);
+                        },
+                        error: function() {
+                            alert('Failed to fetch movie');
+                        }
+                    });
+                });
+
+                // Fetch and display shows
+                showIds.forEach(function(showId) {
+                    $.ajax({
+                        url: `/api/shows/${showId}`,
+                        type: 'GET',
+                        success: function(show) {
+                            const providerInfoLastUpdate = new Date(show.providerinfo_lastupdate);
+                            const currentTime = new Date();
+                            const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+
+                            const showItem = $('<li>');
+                            const mainText = isOlderThan24Hours
+                                ? $('<span>').text(show.original_name + " (provider information older than 24 hours, update suggested)").css('color', 'red')
+                                : $('<span>').text(show.original_name);
+
+                            showItem.append(mainText);
+
+                            const providersDiv = $('<div>').addClass('providers');
+                            show.provider_names.forEach(function(provider) {
+                                providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+                            });
+                            showItem.append(providersDiv);
+
+                            // Add hidden inputs for show fields
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_name').val(show.original_name));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(show.id));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(show.adult));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(show.backdrop_path));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(show.genre_ids));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'origin_country').val(show.origin_country));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(show.original_language));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(show.overview));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(show.popularity));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(show.poster_path));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'first_air_date').val(show.first_air_date));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'name').val(show.name));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(show.vote_average));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(show.vote_count));
+                            showItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(show.providerinfo_lastupdate));
+
+                            // Add delete button
+                            const deleteButton = $('<button>').text('Remove').click(function() {
+                                // Remove from DB
+                                // $.ajax({
+                                //     url: '/api/shows/' + show.id,
+                                //     type: 'DELETE',
+                                //     success: function() {
+                                //         showItem.remove();
+                                //     },
+                                //     error: function() {
+                                //         alert('Failed to delete show');
+                                //     }
+                                // });
+                                // Remove from watchlist
+                                $.ajax({
+                                    url: getUrl,
+                                    type: 'GET',
+                                    success: function(watchlist) {
+                                        const index = watchlist.show_ids.indexOf(show.id);
+                                        if (index > -1) {
+                                            watchlist.show_ids.splice(index, 1);
+                                            $.ajax({
+                                                url: putUrl,
+                                                type: 'PUT',
+                                                contentType: 'application/json',
+                                                data: JSON.stringify(watchlist),
+                                                success: function() {
+                                                    showItem.remove();
+                                                },
+                                                error: function() {
+                                                    alert('Failed to update watchlist');
+                                                }
+                                            });
+                                        }
+                                    },
+                                    error: function() {
+                                        alert('Failed to fetch watchlist');
+                                    }
+                                });
+                            });
+                            showItem.append(deleteButton.addClass('indent'));
+
+                            $('#shows-list').append(showItem);
+                        },
+                        error: function() {
+                            alert('Failed to fetch show');
+                        }
                 });
             });
         },
@@ -193,6 +300,200 @@ $(document).ready(function() {
             alert('Failed to fetch watchlist');
         }
     });
+    }
+
+    // // Fetch watchlist from session
+    // $.ajax({
+    //     url: '/api/watchlist',
+    //     type: 'GET',
+    //     success: function(watchlist) {
+    //         const movieIds = watchlist.movie_ids;
+    //         const showIds = watchlist.show_ids;
+    //
+    //         // Fetch and display movies
+    //         movieIds.forEach(function(movieId) {
+    //             $.ajax({
+    //                 url: `/api/movies/${movieId}`,
+    //                 type: 'GET',
+    //                 success: function(movie) {
+    //                     const providerInfoLastUpdate = new Date(movie.providerinfo_lastupdate);
+    //                     const currentTime = new Date();
+    //                     const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+    //
+    //                     const movieItem = $('<li>');
+    //                     const mainText = isOlderThan24Hours
+    //                         ? $('<span>').text(movie.original_title + " (provider information older than 24 hours, update suggested)").css('color', 'red')
+    //                         : $('<span>').text(movie.original_title);
+    //
+    //                     movieItem.append(mainText)
+    //
+    //                     const providersDiv = $('<div>').addClass('providers');
+    //                     movie.provider_names.forEach(function(provider) {
+    //                         providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+    //                     });
+    //                     movieItem.append(providersDiv);
+    //
+    //                     // Add hidden inputs for movie fields
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_title').val(movie.original_title));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(movie.id));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(movie.adult));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(movie.backdrop_path));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(movie.genre_ids));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(movie.original_language));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(movie.overview));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(movie.popularity));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(movie.poster_path));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'release_date').val(movie.release_date));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'title').val(movie.title));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'video').val(movie.video));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(movie.vote_average));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(movie.vote_count));
+    //                     movieItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(movie.providerinfo_lastupdate));
+    //
+    //                     // Add delete button
+    //                     const deleteButton = $('<button>').text('Remove').click(function() {
+    //                         // Remove from DB
+    //                         // $.ajax({
+    //                         //     url: '/api/movies/' + movie.id,
+    //                         //     type: 'DELETE',
+    //                         //     success: function() {
+    //                         //         movieItem.remove();
+    //                         //     },
+    //                         //     error: function() {
+    //                         //         alert('Failed to delete movie');
+    //                         //     }
+    //                         // });
+    //                         // Remove from watchlist
+    //                         $.ajax({
+    //                             url: '/api/watchlist',
+    //                             type: 'GET',
+    //                             success: function(watchlist) {
+    //                                 const index = watchlist.movie_ids.indexOf(movie.id);
+    //                                 if (index > -1) {
+    //                                     watchlist.movie_ids.splice(index, 1);
+    //                                     $.ajax({
+    //                                         url: '/api/watchlist',
+    //                                         type: 'PUT',
+    //                                         contentType: 'application/json',
+    //                                         data: JSON.stringify(watchlist),
+    //                                         success: function() {
+    //                                             movieItem.remove();
+    //                                         },
+    //                                         error: function() {
+    //                                             alert('Failed to update watchlist');
+    //                                         }
+    //                                     });
+    //                                 }
+    //                             },
+    //                             error: function() {
+    //                                 alert('Failed to fetch watchlist');
+    //                             }
+    //                         });
+    //                     });
+    //                     movieItem.append(deleteButton.addClass('indent'));
+    //
+    //                     $('#movies-list').append(movieItem);
+    //                 },
+    //                 error: function() {
+    //                     alert('Failed to fetch movie');
+    //                 }
+    //             });
+    //         });
+    //
+    //         // Fetch and display shows
+    //         showIds.forEach(function(showId) {
+    //             $.ajax({
+    //                 url: `/api/shows/${showId}`,
+    //                 type: 'GET',
+    //                 success: function(show) {
+    //                     const providerInfoLastUpdate = new Date(show.providerinfo_lastupdate);
+    //                     const currentTime = new Date();
+    //                     const isOlderThan24Hours = (currentTime - providerInfoLastUpdate) > (24 * 60 * 60 * 1000);
+    //
+    //                     const showItem = $('<li>');
+    //                     const mainText = isOlderThan24Hours
+    //                         ? $('<span>').text(show.original_name + " (provider information older than 24 hours, update suggested)").css('color', 'red')
+    //                         : $('<span>').text(show.original_name);
+    //
+    //                     showItem.append(mainText);
+    //
+    //                     const providersDiv = $('<div>').addClass('providers');
+    //                     show.provider_names.forEach(function(provider) {
+    //                         providersDiv.append($('<span>').text(provider).addClass('indent provider-name')[0]);
+    //                     });
+    //                     showItem.append(providersDiv);
+    //
+    //                     // Add hidden inputs for show fields
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_name').val(show.original_name));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(show.id));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'adult').val(show.adult));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'backdrop_path').val(show.backdrop_path));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'genre_ids').val(show.genre_ids));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'origin_country').val(show.origin_country));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'original_language').val(show.original_language));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'overview').val(show.overview));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'popularity').val(show.popularity));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'poster_path').val(show.poster_path));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'first_air_date').val(show.first_air_date));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'name').val(show.name));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_average').val(show.vote_average));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'vote_count').val(show.vote_count));
+    //                     showItem.append($('<input>').attr('type', 'hidden').attr('name', 'providerinfo_lastupdate').val(show.providerinfo_lastupdate));
+    //
+    //                     // Add delete button
+    //                     const deleteButton = $('<button>').text('Remove').click(function() {
+    //                         // Remove from DB
+    //                         // $.ajax({
+    //                         //     url: '/api/shows/' + show.id,
+    //                         //     type: 'DELETE',
+    //                         //     success: function() {
+    //                         //         showItem.remove();
+    //                         //     },
+    //                         //     error: function() {
+    //                         //         alert('Failed to delete show');
+    //                         //     }
+    //                         // });
+    //                         // Remove from watchlist
+    //                         $.ajax({
+    //                             url: '/api/watchlist',
+    //                             type: 'GET',
+    //                             success: function(watchlist) {
+    //                                 const index = watchlist.show_ids.indexOf(show.id);
+    //                                 if (index > -1) {
+    //                                     watchlist.show_ids.splice(index, 1);
+    //                                     $.ajax({
+    //                                         url: '/api/watchlist',
+    //                                         type: 'PUT',
+    //                                         contentType: 'application/json',
+    //                                         data: JSON.stringify(watchlist),
+    //                                         success: function() {
+    //                                             showItem.remove();
+    //                                         },
+    //                                         error: function() {
+    //                                             alert('Failed to update watchlist');
+    //                                         }
+    //                                     });
+    //                                 }
+    //                             },
+    //                             error: function() {
+    //                                 alert('Failed to fetch watchlist');
+    //                             }
+    //                         });
+    //                     });
+    //                     showItem.append(deleteButton.addClass('indent'));
+    //
+    //                     $('#shows-list').append(showItem);
+    //                 },
+    //                 error: function() {
+    //                     alert('Failed to fetch show');
+    //                 }
+    //             });
+    //         });
+    //     },
+    //     error: function() {
+    //         alert('Failed to fetch watchlist');
+    //     }
+    // });
 
 // Update providers button click event
     $('#update-providers-button').on('click', function() {
