@@ -14,6 +14,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
@@ -75,5 +76,20 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found in DB"));
     }
+
+    public void updateUser(String username, Map<String, String> updates) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        if (updates.containsKey("password")) {
+            user.setPassword(passwordEncoder.encode(updates.get("password")));
+        }
+        if (updates.containsKey("email")) {
+            user.setEmail(updates.get("email"));
+        }
+
+        userRepository.save(user);
+    }
+
 
 }

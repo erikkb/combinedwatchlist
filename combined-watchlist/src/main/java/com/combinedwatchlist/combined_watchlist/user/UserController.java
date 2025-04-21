@@ -47,4 +47,11 @@ public class UserController {
         );
     }
 
+    @PatchMapping("/me")
+    public void updateCurrentUser(@RequestBody Map<String, String> updates, Authentication authentication) {
+        String username = authentication.getName();
+        userService.updateUser(username, updates);
+    }
+
+
 }

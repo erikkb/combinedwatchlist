@@ -82,7 +82,7 @@ public class WatchlistService {
 
     public void delete(long id) {watchlistRepository.delete(findById(id));}
 
-    //works for now as workaround to the error with updating via save() stating that the id already exists (something with sequence?)
+    //update via save now works -> review update method in other packages (suspicion: ids not as BIGSERIAL and not letting Spring Data handle id generation was likely the issue)
     public void update(Watchlist watchlist, long id) {
         if(id == watchlist.getId()) {
 //            delete(id);

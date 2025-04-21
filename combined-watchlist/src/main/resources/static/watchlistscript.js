@@ -3,6 +3,7 @@
 $(document).ready(function() {
     $('#login-form').hide();
     $('#register-form').hide();
+    $('#profile-form').hide();
 
     window.currentUser = null;
 
@@ -12,15 +13,24 @@ $(document).ready(function() {
 
         if (loggedIn) {
             window.currentUser = user;
-            statusDiv.append(`<span>Logged in as: <strong>${user.username}</strong></span>`);
+            const usernameSpan = $(`<span style="cursor:pointer;"><strong>${user.username}</strong></span>`);
+            statusDiv.append(`Logged in as: `).append(usernameSpan);
             statusDiv.append(` <button id="logout-btn">Logout</button>`);
+
+            usernameSpan.on('click', function () {
+                $('#login-form').hide();
+                $('#register-form').hide();
+                $('#profile-form').toggle();
+            });
 
             $('#logout-btn').on('click', function () {
                 $.post('/api/users/logout', function () {
                     location.reload();
                 });
             });
-            $('#auth-forms').hide();
+            $('#login-form').hide();
+            $('#register-form').hide();
+            $('#profile-form').hide();
         } else {
             window.currentUser = null;
             statusDiv.append(`<span>Logged in as: <strong>Guest</strong></span>`);
@@ -30,10 +40,12 @@ $(document).ready(function() {
             $('#login-btn').on('click', function () {
                 console.log("Login button clicked");
                 $('#register-form').hide(); // hide other
+                $('#profile-form').hide();
                 $('#login-form').toggle();  // toggle this
             });
             $('#register-btn').on('click', function () {
                 $('#login-form').hide(); // hide other
+                $('#profile-form').hide();
                 $('#register-form').toggle(); // toggle this
             });
         }
@@ -636,6 +648,38 @@ $(document).ready(function() {
                     }
                 }
             });
+        });
+    });
+
+    $('#profile').on('submit', function (e) {
+        e.preventDefault();
+
+        const newPassword = $('#new-password').val().trim();
+        const newEmail = $('#new-email').val().trim();
+
+        if (!newPassword && !newEmail) {
+            alert('Please enter at least one field to update.');
+            return;
+        }
+
+        const payload = {};
+        if (newPassword) payload.password = newPassword;
+        if (newEmail) payload.email = newEmail;
+
+        $.ajax({
+            url: '/api/users/me',
+            type: 'PATCH',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function () {
+                alert('Profile updated successfully!');
+                $('#profile-form').hide();
+                $('#new-password').val('');
+                $('#new-email').val('');
+            },
+            error: function () {
+                alert('Failed to update profile.');
+            }
         });
     });
 });
