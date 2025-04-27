@@ -1,5 +1,6 @@
 package com.combinedwatchlist.combined_watchlist.user;
 
+import com.combinedwatchlist.combined_watchlist.user.dto.PasswordResetRequest;
 import com.combinedwatchlist.combined_watchlist.user.dto.RegisterRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -51,6 +52,18 @@ public class UserController {
     public void updateCurrentUser(@RequestBody Map<String, String> updates, Authentication authentication) {
         String username = authentication.getName();
         userService.updateUser(username, updates);
+    }
+
+    @PostMapping("/request-password-reset")
+    @ResponseStatus(HttpStatus.OK)
+    public void requestPasswordReset(@RequestBody PasswordResetRequest request) {
+        userService.requestPasswordReset(request.email());
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.OK)
+    public void resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        userService.resetPasswordWithToken(token, newPassword);
     }
 
 

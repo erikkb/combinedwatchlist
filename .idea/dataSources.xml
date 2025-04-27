@@ -13,5 +13,16 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="postgres" uuid="791b7ef1-c2c5-45f1-8e05-f7dc77a206a8">
+      <imported>true</imported>
+      <configured-by-url>true</configured-by-url>
+      <remarks>$PROJECT_DIR$/combined-watchlist/src/main/resources/application-test.properties</remarks>
+      <jdbc-driver>org.testcontainers.jdbc.ContainerDatabaseDriver</jdbc-driver>
+      <jdbc-url>jdbc:tc:postgresql:17:///combined_watchlist</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

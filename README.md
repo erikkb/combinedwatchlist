@@ -6,4 +6,12 @@ Currently assumes the users location is in Germany, multi-region and users with 
 
 ## Requirements
 - Docker Desktop
-- Valid TMDB API key (https://www.themoviedb.org/documentation/api) located in /resources/credentials.properties
+- a file /resources/credentials.properties containing a valid TMDB API key, credentials for a Spring Security admin user and a @gmail account with a valid App password:
+```properties
+TMDB_KEY=get here: https://www.themoviedb.org/documentation/api
+admin.username=admin
+admin.password=verysecret
+admin.email=admin@provider.com
+spring.mail.username=youremailadress@gmail.com
+spring.mail.password=yourapppassword
+```

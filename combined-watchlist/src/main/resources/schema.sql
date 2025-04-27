@@ -3,8 +3,18 @@ drop table if exists show;
 drop table if exists watchlist;
 drop table if exists guest_users;
 drop table if exists users;
+drop table if exists password_reset_tokens;
 drop table if exists spring_session_attributes;
 drop table if exists spring_session;
+
+
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id BIGSERIAL,
+    user_id BIGINT NOT NULL,
+    token VARCHAR(36) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL,
@@ -14,7 +24,6 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(255),
     PRIMARY KEY (id)
 );
-
 
 CREATE TABLE IF NOT EXISTS movie (
     id BIGINT NOT NULL,

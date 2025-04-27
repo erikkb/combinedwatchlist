@@ -15,12 +15,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.data.util.Pair;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
+@EnableScheduling
 public class CombinedWatchlistApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(CombinedWatchlistApplication.class);

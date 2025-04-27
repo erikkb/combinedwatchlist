@@ -4,6 +4,7 @@ $(document).ready(function() {
     $('#login-form').hide();
     $('#register-form').hide();
     $('#profile-form').hide();
+    $('#request-reset-form').hide();
     // Create watchlist if it doesn't exist
     $.ajax({
         url: '/api/watchlist',
@@ -51,17 +52,26 @@ $(document).ready(function() {
             statusDiv.append(`<span>Logged in as: <strong>Guest</strong></span>`);
             statusDiv.append(`<button id="login-btn">Login</button>`);
             statusDiv.append(`<button id="register-btn">Register</button>`);
+            statusDiv.append(`<button id="request-reset-btn">Forgot Password?</button>`);
 
             $('#login-btn').on('click', function () {
                 console.log("Login button clicked");
                 $('#register-form').hide(); // hide other
                 $('#profile-form').hide();
+                $('#request-reset-form').hide();
                 $('#login-form').toggle();  // toggle this
             });
             $('#register-btn').on('click', function () {
                 $('#login-form').hide(); // hide other
                 $('#profile-form').hide();
+                $('#request-reset-form').hide();
                 $('#register-form').toggle(); // toggle this
+            });
+            $('#request-reset-btn').on('click', function () {
+                $('#login-form').hide();
+                $('#register-form').hide();
+                $('#profile-form').hide();
+                $('#request-reset-form').toggle();
             });
             isLoggedIn = false;
         }
@@ -131,6 +141,39 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('#request-reset').on('submit', function (e) {
+        e.preventDefault();
+
+        const email = $('#request-reset input[name="email"]').val();
+        const submitButton = $('#request-reset button[type="submit"]');
+
+        // Disable the button immediately
+        submitButton.prop('disabled', true);
+        submitButton.text('Sending...');
+
+        // Auto-reenable after 5 seconds no matter what
+        setTimeout(() => {
+            submitButton.prop('disabled', false);
+            submitButton.text('Send Reset Link');
+        }, 5000);
+
+        $.ajax({
+            url: '/api/users/request-password-reset',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ email: email }),
+            success: function () {
+                alert('If your account has an email associated with it, a password reset link has been sent.\n\nIf you do not receive an email within a few minutes, please check your spam folder or verify that your account has a valid email set.');
+                $('#request-reset-form').hide();
+                $('#request-reset input[name="email"]').val('');
+            },
+            error: function () {
+                alert('Failed to send reset email. Please try again later.');
+            }
+        });
+    });
+
 
     $('form.search-form').on('submit', function(event) {
         event.preventDefault();
