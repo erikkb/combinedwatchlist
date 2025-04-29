@@ -4,7 +4,6 @@ import com.combinedwatchlist.combined_watchlist.provider.ProvidersPerCountry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotEmpty;
-import org.postgresql.util.PGobject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.Version;
@@ -50,11 +49,6 @@ public class Movie {
     private String providersJson = null;
     @Transient
     private Map<String, ProvidersPerCountry> providers = null;
-//    //providerNames and Logos not as Pair/Tuple to make storing in database easier, can be turned into Pair in service
-//    @JsonProperty("provider_names")
-//    private List<String> providerNames = null;
-//    @JsonProperty("provider_logos")
-//    private List<String> providerLogos = null;
     @Column("providerinfo_lastupdate")
     @JsonProperty("providerinfo_lastupdate")
     private LocalDateTime providerInfoLastUpdate = null;
@@ -98,8 +92,6 @@ public class Movie {
         this.voteAverage = voteAverage;
         this.voteCount = voteCount;
         this.providers = providers;
-//        this.providerNames = providerNames;
-//        this.providerLogos = providerLogos;
         this.providerInfoLastUpdate = providerInfoLastUpdate;
     }
 
@@ -234,30 +226,6 @@ public class Movie {
         this.voteCount = voteCount;
     }
 
-//    public List<String> getProviderNames() {
-//        return providerNames;
-//    }
-//
-//    public void setProviderNames(List<String> providerNames) {
-//        this.providerNames = providerNames;
-//    }
-//
-//    public void addProviderName(String providerName) {
-//        this.providerNames.add(providerName);
-//    }
-//
-//    public List<String> getProviderLogos() {
-//        return providerLogos;
-//    }
-//
-//    public void setProviderLogos(List<String> providerLogos) {
-//        this.providerLogos = providerLogos;
-//    }
-//
-//    public void addProviderLogo(String providerLogo) {
-//        this.providerLogos.add(providerLogo);
-//    }
-
     public Map<String, ProvidersPerCountry> getProviders() {
         return providers;
     }
@@ -305,21 +273,6 @@ public class Movie {
         }
     }
 
-//    @Column("providers")
-//    public PGobject getProvidersJsonForDb() {
-//        if (providersJson == null) {
-//            return null;
-//        }
-//        try {
-//            PGobject jsonObject = new PGobject();
-//            jsonObject.setType("jsonb");
-//            jsonObject.setValue(providersJson);
-//            return jsonObject;
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to create PGobject for providersJson", e);
-//        }
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -351,8 +304,6 @@ public class Movie {
                 ", voteCount=" + voteCount +
                 ", providersJson='" + providersJson + '\'' +
                 ", providers=" + providers +
-//                ", providerNames=" + providerNames +
-//                ", providerLogos=" + providerLogos +
                 ", providerInfoLastUpdate=" + providerInfoLastUpdate +
                 '}';
     }

@@ -25,8 +25,8 @@ public class WatchlistService {
 
         if (watchlist == null) {
             watchlist = new Watchlist();
-//            watchlist.setId(UUID.randomUUID().toString());
             //for future: either make id of actual users (not guest) UUIDs or think of something else (if both are BIGSERIAL there might be a conflict)
+            //-> actually not needed, as the watchlist is not saved in the DB for guest users
             watchlist.setUserId(guestUser.id());
             watchlist.setMovieIds(Collections.emptyList());
             watchlist.setShowIds(Collections.emptyList());
@@ -42,7 +42,6 @@ public class WatchlistService {
         if (session.getAttribute("watchlist") == null) {
             Watchlist watchlist = new Watchlist();
             // Don't set ID — not needed for session attribute and would cause issues when migrating to DB
-//            watchlist.setId(UUID.randomUUID().toString());
             watchlist.setUserId(guestUser.id());
             watchlist.setMovieIds(Collections.emptyList());
             watchlist.setShowIds(Collections.emptyList());

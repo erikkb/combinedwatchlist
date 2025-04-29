@@ -68,8 +68,6 @@ public class UserService {
         // Migrate guest watchlist to DB
         watchlistService.migrateGuestWatchlistToUser(session, user.getId());
 
-//        session.setAttribute("userId", user.getId());
-
         loginUser(user, session);
     }
 
@@ -151,7 +149,6 @@ public class UserService {
         mailSender.send(mailMessage);
     }
 
-
     public void resetPasswordWithToken(String token, String newPassword) {
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Invalid or expired token."));
@@ -183,6 +180,4 @@ public class UserService {
             System.err.println("[CLEANUP] Failed to clean expired password reset tokens: " + e.getMessage());
         }
     }
-
-
 }

@@ -1,7 +1,5 @@
 package com.combinedwatchlist.combined_watchlist.show;
 
-import com.combinedwatchlist.combined_watchlist.movie.Movie;
-import com.combinedwatchlist.combined_watchlist.movie.MovieNotFoundException;
 import com.combinedwatchlist.combined_watchlist.provider.ProvidersPerCountry;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -58,16 +56,6 @@ public class ShowService {
         showRepository.delete(findById(id));
     }
 
-//    List<Pair<String, String>> getProviders(Show show) {
-//        List<Pair<String, String>> providers = new ArrayList<>();
-//        List<String> providerNames = show.getProviderNames();
-//        List<String> providerLogos = show.getProviderLogos();
-//        for (int i = 0; i < providerNames.size(); i++) {
-//            providers.add(Pair.of(providerNames.get(i), providerLogos.get(i)));
-//        }
-//        return providers;
-//    }
-
     List<String> getGenreNames(Show show) {
         List<String> genreNames = new ArrayList<>();
         List<Integer> genreIds = show.getGenreIds();
@@ -93,7 +81,6 @@ public class ShowService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provider info was updated less than 24 hours ago.");
             }
         } catch (ShowNotFoundException e) {
-            // Log the exception or handle it as needed
             System.out.println("Show not found in searchProviders(): " + e.getMessage());
         }
 
@@ -101,8 +88,4 @@ public class ShowService {
         Map<String, ProvidersPerCountry> providers = showRestClient.searchProviders(showId);
         return Pair.of(providers, LocalDateTime.now());
     }
-
-//    List<Show> findByGenre(String genre) {
-//        return showRepository.findByGenre(genre);
-//    }
 }

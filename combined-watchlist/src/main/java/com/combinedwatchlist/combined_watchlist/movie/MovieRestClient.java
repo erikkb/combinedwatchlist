@@ -7,8 +7,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -89,34 +87,4 @@ public class MovieRestClient {
         }
         return providers;
     }
-
-//    public List<Pair<String, String>> searchProviders(long movieId) {
-//        return rateLimiter.executeWithRetry(() -> {
-//            JsonNode response = restClient.get()
-//                    .uri("movie/{movieId}/watch/providers", movieId)
-//                    .retrieve()
-//                    .body(JsonNode.class);
-//
-//            JsonNode flatratesNode = null;
-//            try {
-//                JsonNode resultsNode = response.get("results");
-//                JsonNode deNode = resultsNode.get("DE");
-//                flatratesNode = deNode.get("flatrate");
-//            } catch (NullPointerException e) {
-//                return List.of(Pair.of("noProvider", "noProvider"));
-//            }
-//
-//            List<Pair<String, String>> providers = new ArrayList<>();
-//            if (flatratesNode != null && flatratesNode.isArray()) {
-//                for (JsonNode providerNode : flatratesNode) {
-//                    String providerName = providerNode.get("provider_name").asText();
-//                    String logoPath = providerNode.get("logo_path").asText();
-//                    providers.add(Pair.of(providerName, logoPath));
-//                }
-//            } else {
-//                return List.of(Pair.of("noProvider", "noProvider"));
-//            }
-//            return providers;
-//        }, 10, 10000).join(); //using join() for now, async becomes relevant at 100+ concurrent users
-//    }
 }

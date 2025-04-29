@@ -65,6 +65,4 @@ public class UserController {
     public void resetPassword(@RequestParam String token, @RequestParam String newPassword) {
         userService.resetPasswordWithToken(token, newPassword);
     }
-
-
 }
