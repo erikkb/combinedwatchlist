@@ -1,5 +1,6 @@
 package com.combinedwatchlist.combined_watchlist.show;
 
+import com.combinedwatchlist.combined_watchlist.provider.ProvidersPerCountry;
 import jakarta.validation.Valid;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/shows")
@@ -52,7 +54,7 @@ public class ShowController {
     }
 
     @GetMapping("/search/providers")
-    Pair<List<Pair<String, String>>, LocalDateTime> searchProviders(@RequestParam Long showId) {
+    Pair<Map<String, ProvidersPerCountry>, LocalDateTime> searchProviders(@RequestParam Long showId) {
         return showService.searchProviders(showId);
     }
 }

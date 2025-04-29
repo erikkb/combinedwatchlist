@@ -1,8 +1,11 @@
 package com.combinedwatchlist.combined_watchlist.show;
 
+import com.combinedwatchlist.combined_watchlist.provider.ProvidersPerCountry;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -10,10 +13,13 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Table("show")
 public class Show {
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Id
     private long id;
@@ -40,11 +46,15 @@ public class Show {
     private double voteAverage;
     @JsonProperty("vote_count")
     private int voteCount;
-    //providerNames and Logos not as Pair/Tuple to make storing in database easier, can be turned into Pair in service
-    @JsonProperty("provider_names")
-    private List<String> providerNames = null;
-    @JsonProperty("provider_logos")
-    private List<String> providerLogos = null;
+    @Column("providers")
+    private String providersJson = null;
+    @Transient
+    private Map<String, ProvidersPerCountry> providers = null;
+//    //providerNames and Logos not as Pair/Tuple to make storing in database easier, can be turned into Pair in service
+//    @JsonProperty("provider_names")
+//    private List<String> providerNames = null;
+//    @JsonProperty("provider_logos")
+//    private List<String> providerLogos = null;
     @Column("providerinfo_lastupdate")
     @JsonProperty("providerinfo_lastupdate")
     private LocalDateTime providerInfoLastUpdate = null;
@@ -71,7 +81,7 @@ public class Show {
         this.voteCount = voteCount;
     }
 
-    public Show(long id, boolean adult, String backdropPath, List<Integer> genreIds, List<String> originCountry, String originalLanguage, String originalName, String overview, double popularity, String posterPath, LocalDate firstAirDate, String name, double voteAverage, int voteCount, List<String> providerNames, List<String> providerLogos, LocalDateTime providerInfoLastUpdate) {
+    public Show(long id, boolean adult, String backdropPath, List<Integer> genreIds, List<String> originCountry, String originalLanguage, String originalName, String overview, double popularity, String posterPath, LocalDate firstAirDate, String name, double voteAverage, int voteCount, Map<String, ProvidersPerCountry> providers, LocalDateTime providerInfoLastUpdate) {
         this.id = id;
         this.adult = adult;
         this.backdropPath = backdropPath;
@@ -86,8 +96,28 @@ public class Show {
         this.name = name;
         this.voteAverage = voteAverage;
         this.voteCount = voteCount;
-        this.providerNames = providerNames;
-        this.providerLogos = providerLogos;
+        this.providers = providers;
+//        this.providerNames = providerNames;
+//        this.providerLogos = providerLogos;
+        this.providerInfoLastUpdate = providerInfoLastUpdate;
+    }
+
+    public Show(long id, boolean adult, String backdropPath, List<Integer> genreIds, List<String> originCountry, String originalLanguage, String originalName, String overview, double popularity, String posterPath, LocalDate firstAirDate, String name, double voteAverage, int voteCount, String providersJson, LocalDateTime providerInfoLastUpdate) {
+        this.id = id;
+        this.adult = adult;
+        this.backdropPath = backdropPath;
+        this.genreIds = genreIds;
+        this.originCountry = originCountry;
+        this.originalLanguage = originalLanguage;
+        this.originalName = originalName;
+        this.overview = overview;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.firstAirDate = firstAirDate;
+        this.name = name;
+        this.voteAverage = voteAverage;
+        this.voteCount = voteCount;
+        this.providersJson = providersJson;
         this.providerInfoLastUpdate = providerInfoLastUpdate;
     }
 
@@ -203,28 +233,36 @@ public class Show {
         this.voteCount = voteCount;
     }
 
-    public List<String> getProviderNames() {
-        return providerNames;
+//    public List<String> getProviderNames() {
+//        return providerNames;
+//    }
+//
+//    public void setProviderNames(List<String> providerNames) {
+//        this.providerNames = providerNames;
+//    }
+//
+//    public void addProviderName(String providerName) {
+//        this.providerNames.add(providerName);
+//    }
+//
+//    public List<String> getProviderLogos() {
+//        return providerLogos;
+//    }
+//
+//    public void setProviderLogos(List<String> providerLogos) {
+//        this.providerLogos = providerLogos;
+//    }
+//
+//    public void addProviderLogo(String providerLogo) {
+//        this.providerLogos.add(providerLogo);
+//    }
+
+    public Map<String, ProvidersPerCountry> getProviders() {
+        return providers;
     }
 
-    public void setProviderNames(List<String> providerNames) {
-        this.providerNames = providerNames;
-    }
-
-    public void addProviderName(String providerName) {
-        this.providerNames.add(providerName);
-    }
-
-    public List<String> getProviderLogos() {
-        return providerLogos;
-    }
-
-    public void setProviderLogos(List<String> providerLogos) {
-        this.providerLogos = providerLogos;
-    }
-
-    public void addProviderLogo(String providerLogo) {
-        this.providerLogos.add(providerLogo);
+    public void setProviders(Map<String, ProvidersPerCountry> providers) {
+        this.providers = providers;
     }
 
     public LocalDateTime getProviderInfoLastUpdate() {
@@ -233,6 +271,37 @@ public class Show {
 
     public void setProviderInfoLastUpdate(LocalDateTime providerInfoLastUpdate) {
         this.providerInfoLastUpdate = providerInfoLastUpdate;
+    }
+
+    public String getProvidersJson() {
+        return providersJson;
+    }
+
+    public void setProvidersJson(String providersJson) {
+        this.providersJson = providersJson;
+    }
+
+    public void hydrateProviders() {
+        if (this.providersJson != null) {
+            try {
+                this.providers = mapper.readValue(
+                        this.providersJson,
+                        mapper.getTypeFactory().constructMapType(Map.class, String.class, ProvidersPerCountry.class)
+                );
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to deserialize providers JSON", e);
+            }
+        }
+    }
+
+    public void dehydrateProviders() {
+        if (this.providers != null) {
+            try {
+                this.providersJson = mapper.writeValueAsString(this.providers);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to serialize providers map", e);
+            }
+        }
     }
 
     @Override
@@ -264,6 +333,11 @@ public class Show {
                 ", name='" + name + '\'' +
                 ", voteAverage=" + voteAverage +
                 ", voteCount=" + voteCount +
+                ", providersJson='" + providersJson + '\'' +
+                ", providers=" + providers +
+//                ", providerNames=" + providerNames +
+//                ", providerLogos=" + providerLogos +
+                ", providerInfoLastUpdate=" + providerInfoLastUpdate +
                 '}';
     }
 }

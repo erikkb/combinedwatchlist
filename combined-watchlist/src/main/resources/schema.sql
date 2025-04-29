@@ -40,8 +40,7 @@ CREATE TABLE IF NOT EXISTS movie (
     video BOOLEAN,
     vote_average FLOAT,
     vote_count INT,
-    provider_names VARCHAR(255)[],
-    provider_logos VARCHAR(255)[],
+    providers VARCHAR,
     providerinfo_lastupdate TIMESTAMP,
     version INT,
     PRIMARY KEY (id)
@@ -62,8 +61,7 @@ CREATE TABLE IF NOT EXISTS show (
     name VARCHAR(255) NOT NULL,
     vote_average FLOAT,
     vote_count INT,
-    provider_names VARCHAR(255)[],
-    provider_logos VARCHAR(255)[],
+    providers VARCHAR,
     providerinfo_lastupdate TIMESTAMP,
     version INT,
     PRIMARY KEY (id)

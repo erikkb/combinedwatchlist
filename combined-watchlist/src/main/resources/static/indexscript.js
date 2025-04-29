@@ -303,11 +303,11 @@ $(document).ready(function() {
                         success: function(response) {
                             console.log('Movie providers fetched:', response);
 
-                            const providers = response.first; // This is the List<Pair<String, String>>
+                            const providers = response.first; // This is the List<Pair<String, String>> (not anymore -> Map<String, ProvidersPerCountry>)
                             const providerInfoLastUpdate = response.second; // This is the LocalDateTime
 
-                            const providerNames = providers.map(provider => provider.first);
-                            const providerLogos = providers.map(provider => provider.second);
+                            // const providerNames = providers.map(provider => provider.first);
+                            // const providerLogos = providers.map(provider => provider.second);
 
                             const movie = {
                                 id: movieId,
@@ -324,10 +324,13 @@ $(document).ready(function() {
                                 video: form.find('input[name="video"]').val(),
                                 vote_average: form.find('input[name="vote_average"]').val(),
                                 vote_count: form.find('input[name="vote_count"]').val(),
-                                provider_names: providerNames,
-                                provider_logos: providerLogos,
+                                providers: providers,
+                                // provider_names: providerNames,
+                                // provider_logos: providerLogos,
                                 providerinfo_lastupdate: providerInfoLastUpdate
                             };
+
+                            console.log(movie)
 
                             $.ajax({
                                 url: '/api/movies',
@@ -433,11 +436,11 @@ $(document).ready(function() {
                         success: function(response) {
                             console.log('Show providers fetched:', response);
 
-                            const providers = response.first; // This is the List<Pair<String, String>>
+                            const providers = response.first; // This is the List<Pair<String, String>> (not anymore -> Map<String, ProvidersPerCountry>)
                             const providerInfoLastUpdate = response.second; // This is the LocalDateTime
 
-                            const providerNames = providers.map(provider => provider.first);
-                            const providerLogos = providers.map(provider => provider.second);
+                            // const providerNames = providers.map(provider => provider.first);
+                            // const providerLogos = providers.map(provider => provider.second);
 
                             const show = {
                                 id: showId,
@@ -454,8 +457,9 @@ $(document).ready(function() {
                                 name: form.find('input[name="name"]').val(),
                                 vote_average: form.find('input[name="vote_average"]').val(),
                                 vote_count: form.find('input[name="vote_count"]').val(),
-                                provider_names: providerNames,
-                                provider_logos: providerLogos,
+                                providers: providers,
+                                // provider_names: providerNames,
+                                // provider_logos: providerLogos,
                                 providerinfo_lastupdate: providerInfoLastUpdate
                             };
 

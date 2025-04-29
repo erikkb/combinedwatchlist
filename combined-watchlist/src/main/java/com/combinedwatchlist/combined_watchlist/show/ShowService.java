@@ -2,6 +2,7 @@ package com.combinedwatchlist.combined_watchlist.show;
 
 import com.combinedwatchlist.combined_watchlist.movie.Movie;
 import com.combinedwatchlist.combined_watchlist.movie.MovieNotFoundException;
+import com.combinedwatchlist.combined_watchlist.provider.ProvidersPerCountry;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,7 +26,9 @@ public class ShowService {
     }
 
     public List<Show> findAll() {
-        return showRepository.findAll();
+        List<Show> shows = showRepository.findAll();
+        shows.forEach(Show::hydrateProviders);
+        return shows;
     }
 
     public Show findById(long id) {
@@ -32,10 +36,13 @@ public class ShowService {
         if (show.isEmpty()) {
             throw new ShowNotFoundException("Show with id " + id + " not found");
         }
-        return show.get();
+        Show foundShow = show.get();
+        foundShow.hydrateProviders();
+        return foundShow;
     }
 
     public void save(Show show) {
+        show.dehydrateProviders();
         showRepository.save(show);
     }
 
@@ -51,15 +58,15 @@ public class ShowService {
         showRepository.delete(findById(id));
     }
 
-    List<Pair<String, String>> getProviders(Show show) {
-        List<Pair<String, String>> providers = new ArrayList<>();
-        List<String> providerNames = show.getProviderNames();
-        List<String> providerLogos = show.getProviderLogos();
-        for (int i = 0; i < providerNames.size(); i++) {
-            providers.add(Pair.of(providerNames.get(i), providerLogos.get(i)));
-        }
-        return providers;
-    }
+//    List<Pair<String, String>> getProviders(Show show) {
+//        List<Pair<String, String>> providers = new ArrayList<>();
+//        List<String> providerNames = show.getProviderNames();
+//        List<String> providerLogos = show.getProviderLogos();
+//        for (int i = 0; i < providerNames.size(); i++) {
+//            providers.add(Pair.of(providerNames.get(i), providerLogos.get(i)));
+//        }
+//        return providers;
+//    }
 
     List<String> getGenreNames(Show show) {
         List<String> genreNames = new ArrayList<>();
@@ -78,7 +85,7 @@ public class ShowService {
         return showRestClient.searchShowsByName(showName);
     }
 
-    Pair<List<Pair<String, String>>, LocalDateTime> searchProviders(long showId) {
+    Pair<Map<String, ProvidersPerCountry> , LocalDateTime> searchProviders(long showId) {
         Show show = null;
         try {
             show = findById(showId);
@@ -91,7 +98,7 @@ public class ShowService {
         }
 
         // Fetch new provider info from the API
-        List<Pair<String, String>> providers = showRestClient.searchProviders(showId);
+        Map<String, ProvidersPerCountry> providers = showRestClient.searchProviders(showId);
         return Pair.of(providers, LocalDateTime.now());
     }
 

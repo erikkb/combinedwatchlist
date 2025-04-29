@@ -1,5 +1,6 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
+import com.combinedwatchlist.combined_watchlist.provider.ProvidersPerCountry;
 import com.combinedwatchlist.combined_watchlist.show.Show;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,7 +26,9 @@ public class MovieService {
     }
 
     public List<Movie> findAll() {
-        return movieRepository.findAll();
+        List<Movie> movies = movieRepository.findAll();
+        movies.forEach(Movie::hydrateProviders);
+        return movies;
     }
 
     public Movie findById(long id) {
@@ -32,12 +36,16 @@ public class MovieService {
         if (movie.isEmpty()) {
             throw new MovieNotFoundException("Movie with id " + id + " not found");
         }
-        return movie.get();
+        Movie foundMovie = movie.get();
+        foundMovie.hydrateProviders();
+        return foundMovie;
     }
 
     public void save(Movie movie) {
+        movie.dehydrateProviders();
         movieRepository.save(movie);
     }
+
 
     //works for now as workaround to the error with updating via save() stating that the id already exists (something with sequence?)
     public void update(Movie movie, long id) {
@@ -51,15 +59,15 @@ public class MovieService {
         movieRepository.delete(findById(id));
     }
 
-    List<Pair<String, String>> getProviders(Movie movie) {
-        List<Pair<String, String>> providers = new ArrayList<>();
-        List<String> providerNames = movie.getProviderNames();
-        List<String> providerLogos = movie.getProviderLogos();
-        for (int i = 0; i < providerNames.size(); i++) {
-            providers.add((Pair.of(providerNames.get(i), providerLogos.get(i))));
-        }
-        return providers;
-    }
+//    List<Pair<String, String>> getProviders(Movie movie) {
+//        List<Pair<String, String>> providers = new ArrayList<>();
+//        List<String> providerNames = movie.getProviderNames();
+//        List<String> providerLogos = movie.getProviderLogos();
+//        for (int i = 0; i < providerNames.size(); i++) {
+//            providers.add((Pair.of(providerNames.get(i), providerLogos.get(i))));
+//        }
+//        return providers;
+//    }
 
     List<String> getGenreNames(Movie movie) {
         List<String> genreNames = new ArrayList<>();
@@ -78,7 +86,7 @@ public class MovieService {
         return movieRestClient.searchMoviesByName(movieName);
     }
 
-    Pair<List<Pair<String, String>>, LocalDateTime> searchProviders(long movieId) {
+    Pair<Map<String, ProvidersPerCountry> , LocalDateTime> searchProviders(long movieId) {
         Movie movie = null;
         try {
             movie = findById(movieId);
@@ -91,7 +99,7 @@ public class MovieService {
         }
 
         // Fetch new provider info from the API
-        List<Pair<String, String>> providers = movieRestClient.searchProviders(movieId);
+        Map<String, ProvidersPerCountry> providers = movieRestClient.searchProviders(movieId);
         return Pair.of(providers, LocalDateTime.now());
     }
 

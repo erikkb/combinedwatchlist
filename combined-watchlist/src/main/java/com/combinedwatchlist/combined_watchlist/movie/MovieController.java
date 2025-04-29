@@ -1,5 +1,6 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
+import com.combinedwatchlist.combined_watchlist.provider.ProvidersPerCountry;
 import jakarta.validation.Valid;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -52,7 +54,7 @@ public class MovieController {
     }
 
     @GetMapping("/search/providers")
-    Pair<List<Pair<String, String>>, LocalDateTime> searchProviders(@RequestParam Long movieId) {
+    Pair<Map<String, ProvidersPerCountry>, LocalDateTime> searchProviders(@RequestParam Long movieId) {
         return movieService.searchProviders(movieId);
     }
 

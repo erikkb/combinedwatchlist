@@ -71,10 +71,10 @@ class MovieControllerTest {
 					"Toy Story",
 					false,
 					7.97,
-					18605,
-					List.of("Disney+"),
-					List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
-					LocalDateTime.now()
+					18605
+//					List.of("Disney+"),
+//					List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
+//					LocalDateTime.now()
 			));
     }
 
@@ -126,7 +126,7 @@ class MovieControllerTest {
 
 	@Test
 	void shouldUpdateMovie() throws Exception {
-		var movie = new Movie(862, false, "/3Rfvhy1Nl6sSGJwyjb0QiZzZYlB.jpg", List.of(16, 12, 10751, 35), "en", "Toy Story Updated", "Led by Woody, Andy's toys live happily in his room until Andy's birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy's heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.", 99.248, "/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg", LocalDate.of(1995, 11, 22), "Toy Story", false, 7.97, 18605, List.of("Disney+"), List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"), LocalDateTime.now());
+		var movie = new Movie(862, false, "/3Rfvhy1Nl6sSGJwyjb0QiZzZYlB.jpg", List.of(16, 12, 10751, 35), "en", "Toy Story Updated", "Led by Woody, Andy's toys live happily in his room until Andy's birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy's heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.", 99.248, "/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg", LocalDate.of(1995, 11, 22), "Toy Story", false, 7.97, 18605);
 		mvc.perform(put("/api/movies/862")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(movie))

@@ -54,10 +54,10 @@ class SecurityConfigTest {
                 "Toy Story",
                 false,
                 7.97,
-                18605,
-                List.of("Disney+"),
-                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
-                LocalDateTime.now()
+                18605
+//                List.of("Disney+"),
+//                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
+//                LocalDateTime.now()
         ));
         //in memory H2 default is fine for this test, replace with Testcontainers if needed
         movieService.save(movies.getFirst());

@@ -71,10 +71,10 @@ class ShowControllerTest {
                 LocalDate.of(2008, 1, 20),
                 "Breaking Bad",
                 8.9,
-                15151,
-                List.of("Disney+"),
-                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
-                LocalDateTime.now()
+                15151
+//                List.of("Disney+"),
+//                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
+//                LocalDateTime.now()
         ));
         showService.save(shows.getFirst());
     }
@@ -156,10 +156,10 @@ class ShowControllerTest {
                 LocalDate.of(2008, 1, 20),
                 "Breaking Bad",
                 8.9,
-                15151,
-                List.of("Disney+"),
-                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
-                LocalDateTime.now()
+                15151
+//                List.of("Disney+"),
+//                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
+//                LocalDateTime.now()
         );
         mvc.perform(put("/api/shows/1396")
                         .contentType(MediaType.APPLICATION_JSON)
