@@ -3,6 +3,7 @@ package com.combinedwatchlist.combined_watchlist.config;
 import com.combinedwatchlist.combined_watchlist.user.User;
 import com.combinedwatchlist.combined_watchlist.user.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,6 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 
 @Configuration
@@ -23,10 +30,14 @@ public class SecurityConfig {
 
     private final GuestUserFilter guestUserFilter;
     private final UserRepository userRepository;
+    private final boolean reactMode;
+    private final String frontendBaseUrl;
 
-    public SecurityConfig(GuestUserFilter guestUserFilter, UserRepository userRepository) {
+    public SecurityConfig(GuestUserFilter guestUserFilter, UserRepository userRepository, @Value("${app.react-mode}") boolean reactMode, @Value("${frontend.base-url}") String frontendBaseUrl) {
         this.guestUserFilter = guestUserFilter;
         this.userRepository = userRepository;
+        this.reactMode = reactMode;
+        this.frontendBaseUrl = frontendBaseUrl;
     }
 
     @Bean
@@ -66,10 +77,32 @@ public class SecurityConfig {
                     .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)) //set to STATELESS after switch to JWT
-            .addFilterBefore(guestUserFilter, UsernamePasswordAuthenticationFilter.class)
-            .csrf(csrf -> csrf.disable());
+            .addFilterBefore(guestUserFilter, UsernamePasswordAuthenticationFilter.class);
+
+        if (reactMode) {
+            http
+                    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                    .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+        } else {
+            http.csrf(csrf -> csrf.disable());
+        }
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        if (!reactMode) return null;
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(List.of(frontendBaseUrl));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
