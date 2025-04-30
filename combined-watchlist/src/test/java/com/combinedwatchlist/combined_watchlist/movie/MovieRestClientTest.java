@@ -1,5 +1,6 @@
 package com.combinedwatchlist.combined_watchlist.movie;
 
+import com.combinedwatchlist.combined_watchlist.externalapi.RateLimitedRequestExecutor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -7,13 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -29,6 +33,9 @@ class MovieRestClientTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @MockitoBean
+    RateLimitedRequestExecutor rateLimitedRequestExecutor;
 
     @Test
     void shouldFindMoviesByName() throws JsonProcessingException {
@@ -51,12 +58,25 @@ class MovieRestClientTest {
         );
          List<Movie> movies = List.of(movie1);
 
-        // when
-        this.server.expect(requestTo("https://api.themoviedb.org/3/search/movie?query=toy%20story&include_adult=false&language=en-US&page=1"))
+
+        server.expect(requestTo("https://api.themoviedb.org/3/search/movie?query=toy%20story&include_adult=false&language=en-US&page=1"))
                 .andRespond(withSuccess(objectMapper.writeValueAsString(Map.of("results", movies)), MediaType.APPLICATION_JSON));
 
-        // then
+        // mock executor to run supplier normally
+        when(rateLimitedRequestExecutor.executeWithRetry(
+                org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.anyInt(),
+                org.mockito.ArgumentMatchers.anyLong()
+        )).thenAnswer(invocation -> {
+            var supplier = (java.util.function.Supplier<?>) invocation.getArgument(0);
+            Object result = supplier.get();
+            return CompletableFuture.completedFuture(result);
+        });
+
+        // when
         List<Movie> foundMovies = client.searchMoviesByName("toy story");
+
+        // then
         assertEquals(movies.get(0), foundMovies.get(0));
     }
 

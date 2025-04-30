@@ -5,18 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,20 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 Unit tests for the MovieController class.
  */
 @ActiveProfiles("test")
-@WebMvcTest(MovieController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class MovieControllerTest {
 
-	@Configuration
-	static class TestSecurityConfig {
-		@Bean
-		public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-			http.csrf(csrf -> csrf.disable())
-					.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-			return http.build();
-		}
-	}
-
-    @Autowired
+	@Autowired
     MockMvc mvc;
 
     @Autowired
@@ -81,7 +68,8 @@ class MovieControllerTest {
     @Test
     void shouldFindAll() throws Exception {
         when(movieService.findAll()).thenReturn(movies);
-        mvc.perform(get("/api/movies"))
+        mvc.perform(get("/api/movies")
+				.header("X-Test-Role", "ADMIN"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(movies.size())));
     }
@@ -110,7 +98,8 @@ class MovieControllerTest {
 
 	@Test
 	void shouldReturnNotFoundWithInvalidId() throws Exception {
-		mvc.perform(get("/api/runs/-99"))
+		when(movieService.findById(-99L)).thenThrow(new MovieNotFoundException("Movie with id -99 not found"));
+		mvc.perform(get("/api/movies/-99"))
 				.andExpect(status().isNotFound());
 	}
 
@@ -136,7 +125,8 @@ class MovieControllerTest {
 
 	@Test
 	void shouldDeleteMovie() throws Exception {
-		mvc.perform(delete("/api/movies/862"))
+		mvc.perform(delete("/api/movies/862")
+				.header("X-Test-Role", "ADMIN"))
 				.andExpect(status().isNoContent());
 	}
 

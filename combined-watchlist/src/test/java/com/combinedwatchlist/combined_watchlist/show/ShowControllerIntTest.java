@@ -7,12 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -150,7 +146,12 @@ class ShowControllerIntTest {
 
     @Test
     void shouldDeleteShow() {
-        ResponseEntity<Void> show = restClient.delete()
+        RestClient adminClient = RestClient.builder()
+                .baseUrl("http://localhost:" + randomServerPort)
+                .defaultHeader("X-Test-Role", "ADMIN")
+                .build();
+
+        ResponseEntity<Void> show = adminClient.delete()
                 .uri("/api/shows/4")
                 .retrieve()
                 .toBodilessEntity();

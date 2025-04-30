@@ -146,7 +146,12 @@ class MovieControllerIntTest {
 
     @Test
     void shouldDeleteMovie() {
-        ResponseEntity<Void> movie = restClient.delete()
+        RestClient adminClient = RestClient.builder()
+                .baseUrl("http://localhost:" + randomServerPort)
+                .defaultHeader("X-Test-Role", "ADMIN")
+                .build();
+
+        ResponseEntity<Void> movie = adminClient.delete()
                 .uri("/api/movies/1")
                 .retrieve()
                 .toBodilessEntity();

@@ -5,18 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,18 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 Unit tests for the ShowController class.
  */
 @ActiveProfiles("test")
-@WebMvcTest(ShowController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class ShowControllerTest {
-
-    @Configuration
-    static class TestSecurityConfig {
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-            http.csrf(csrf -> csrf.disable())
-                    .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-            return http.build();
-        }
-    }
 
     @Autowired
     MockMvc mvc;
@@ -50,7 +37,6 @@ class ShowControllerTest {
 
     @MockitoBean
     ShowService showService;
-
 
     private final List<Show> shows = new ArrayList<>();
 
@@ -72,9 +58,6 @@ class ShowControllerTest {
                 "Breaking Bad",
                 8.9,
                 15151
-//                List.of("Disney+"),
-//                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
-//                LocalDateTime.now()
         ));
         showService.save(shows.getFirst());
     }
@@ -111,6 +94,7 @@ class ShowControllerTest {
 
     @Test
     void shouldReturnNotFoundWithInvalidId() throws Exception {
+        when(showService.findById(-99L)).thenThrow(new ShowNotFoundException("not found"));
         mvc.perform(get("/api/shows/-99"))
                 .andExpect(status().isNotFound());
     }
@@ -157,20 +141,18 @@ class ShowControllerTest {
                 "Breaking Bad",
                 8.9,
                 15151
-//                List.of("Disney+"),
-//                List.of("/4nZz9Q6u6FfFqUjW8v6rL1Y6zrE.jpg"),
-//                LocalDateTime.now()
         );
         mvc.perform(put("/api/shows/1396")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(show))
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
     void shouldDeleteShow() throws Exception {
-        mvc.perform(delete("/api/shows/1396"))
+        mvc.perform(delete("/api/shows/1396")
+                .header("X-Test-Role", "ADMIN"))
                 .andExpect(status().isNoContent());
     }
 }
