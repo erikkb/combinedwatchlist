@@ -20,10 +20,10 @@ This file must include a valid TMDB API key, Spring Security admin credentials, 
 ### Rudimentary (integrated) frontend
 If `app.react-mode=false` is set in `combined-watchlist/src/main/resources/application.properties`, the backend will serve a basic frontend accessible at: [http://localhost:8080](http://localhost:8080).
 
-### React frontend (development mode)
+### React frontend (under development)
 To use the standalone React frontend:
 
-1. Set `app.react-mode=true`.
+1. Set `app.react-mode=false` (true requires building the react project and serving it from Spring Boot).
 2. Navigate to the frontend directory (`/react-frontend`).
 3. Install dependencies (only needed once):
    ```bash

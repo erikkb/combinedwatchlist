@@ -50,6 +50,7 @@ public class WatchlistService {
     }
 
     public void updateWatchlist(@RequestBody Watchlist watchlist, HttpSession session) {
+        session.removeAttribute("watchlist");
         session.setAttribute("watchlist", watchlist);
     }
 

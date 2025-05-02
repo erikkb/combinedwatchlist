@@ -1,68 +1,48 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --ctp-mocha-base: #1e1e2e;
+  --ctp-mocha-mantle: #181825;
+  --ctp-mocha-crust: #11111b;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --ctp-mocha-text: #cdd6f4;
+  --ctp-mocha-subtext1: #bac2de;
+  --ctp-mocha-subtext0: #a6adc8;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --ctp-mocha-surface0: #313244;
+  --ctp-mocha-surface1: #45475a;
+  --ctp-mocha-surface2: #585b70;
+
+  --ctp-mocha-overlay0: #6c7086;
+  --ctp-mocha-overlay1: #7f849c;
+  --ctp-mocha-overlay2: #9399b2;
+
+  --ctp-mocha-blue: #89b4fa;
+  --ctp-mocha-lavender: #b4befe;
+  --ctp-mocha-pink: #f5c2e7;
+  --ctp-mocha-red: #f38ba8;
+  --ctp-mocha-green: #a6e3a1;
+  --ctp-mocha-yellow: #f9e2af;
+  --ctp-mocha-peach: #fab387;
+  --ctp-mocha-sky: #89dceb;
+  --ctp-mocha-teal: #94e2d5;
+  --ctp-mocha-mauve: #cba6f7;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  background-color: var(--ctp-mocha-base);
+  color: var(--ctp-mocha-text);
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+@font-face {
+  font-family: 'Great Vibes';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('/fonts/great-vibes-v19-latin-regular.woff2') format('woff2');
+  font-display: swap;
 }

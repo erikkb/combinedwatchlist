@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -46,8 +48,9 @@ public class SecurityConfig {
                         // Forbid DELETE mappings for everyone other than ADMIN user
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/**", "/api/shows/**", "/api/watchlist/**")
                         .hasRole("ADMIN")
-                        // currently logged-in user info only for authenticated users
-                        .requestMatchers("/api/users/me").authenticated()
+                        // GET for all authenticated and PATCH only for roles USER and ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/users/me").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/users/me").hasAnyRole("USER", "ADMIN")
                         // PUT to /api/watchlist/{id} requires USER or ADMIN (DB-level updates, session based updates still allowed for PUT /api/watchlist)
                         .requestMatchers(HttpMethod.PUT, "/api/watchlist/*").hasAnyRole("ADMIN", "USER")
                         // Allow everything else
@@ -76,13 +79,15 @@ public class SecurityConfig {
                     .logoutUrl("/api/users/logout")
                     .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)) //set to STATELESS after switch to JWT
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) //set to STATELESS after switch to JWT
             .addFilterBefore(guestUserFilter, UsernamePasswordAuthenticationFilter.class);
 
         if (reactMode) {
             http
-                    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                    .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/api/users/login", "/api/users/logout"));
         } else {
             http.csrf(csrf -> csrf.disable());
         }
@@ -90,20 +95,20 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        if (!reactMode) return null;
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(frontendBaseUrl));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        if (!reactMode) return null;
+//
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.setAllowedOrigins(List.of(frontendBaseUrl));
+//        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+//        config.setAllowedHeaders(List.of("*"));
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//        return source;
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
