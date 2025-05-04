@@ -70,6 +70,7 @@ export default function LoginModal({ onClose, onForgotPassword }: LoginModalProp
             type="text"
             placeholder="Username"
             value={username}
+            maxLength={255}
             onChange={e => setUsername(e.target.value)}
             required
           />
@@ -77,11 +78,12 @@ export default function LoginModal({ onClose, onForgotPassword }: LoginModalProp
             type="password"
             placeholder="Password"
             value={password}
+            maxLength={255}
             onChange={e => setPassword(e.target.value)}
             required
           />
-          {error && <div className="error">{error}</div>}
           <button type="submit">Login</button>
+          {error && <div className="error"><br />{error}</div>}
           <p className="forgot-password">
             <a href="#" onClick={(e) => { e.preventDefault(); onForgotPassword(); }}>
               Forgot Password?

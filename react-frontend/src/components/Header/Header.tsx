@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import ProfileModal from "../ProfileModal/ProfileModal";
 import LoginModal from "../LoginModal/LoginModal";
@@ -13,7 +13,29 @@ export default function Header() {
   const [showRegister, setShowRegister] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const isAnyModalOpen = showLogin || showRegister || showReset || showProfile;
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMobileMenu(false);
+      }
+    }
+    if (isAnyModalOpen) {
+      setShowMobileMenu(false);
+    }
+    if (showMobileMenu && !isAnyModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMobileMenu, isAnyModalOpen]);
+  
   async function handleLogout() {
     const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='))
       ?.split('=')[1];
@@ -52,9 +74,12 @@ export default function Header() {
   return (
     <>
       <header className="header">
+        <button className="hamburger" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+          <span className="hamburger-icon">☰</span> 
+        </button>
         <div className="header-left">
-          <a href="/">Search</a>
-          <a href="/watchlist">Watchlist</a>
+          <a href="/" onClick={() => setShowMobileMenu(false)}>Search</a>
+          <a href="/watchlist" onClick={() => setShowMobileMenu(false)}>Watchlist</a>
         </div>
 
         <div className="header-center">
@@ -64,15 +89,19 @@ export default function Header() {
         <div className="header-right">
           {user ? (
             <>
-              <span onClick={() => setShowProfile(true)} style={{ cursor: 'pointer' }}>
-                {user.username}
-              </span>
+              <button
+                onClick={() => { setShowProfile(true); }}
+                className="username-button"
+                title={user.username} // tooltip for full username
+              >
+                {user.username.length > 11 ? user.username.slice(0, 10) + "…" : user.username}
+              </button>
               <button onClick={handleLogout}>Logout</button>
             </>
           ) : (
             <>
-              <button onClick={() => setShowLogin(true)}>Login</button>
-              <button onClick={() => setShowRegister(true)}>Register</button>
+              <button onClick={() => { setShowLogin(true); }}>Login</button>
+              <button onClick={() => { setShowRegister(true); }}>Register</button>
             </>
           )}
         </div>
@@ -86,6 +115,30 @@ export default function Header() {
           }}/>}
         {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
         {showReset && <RequestResetModal onClose={() => setShowReset(false)} />}
+        {showMobileMenu && (
+          <div className="mobile-menu" ref={menuRef}>
+            <a href="/">Search</a>
+            <a href="/watchlist">Watchlist</a>
+            <br />
+            {user ? (
+              <>
+                <button 
+                  onClick={() => setShowProfile(true)}
+                  className="username-button"
+                  title={user.username}
+                >
+                  {user.username.length > 11 ? user.username.slice(0, 10) + "…" : user.username}
+                </button>
+                <button onClick={handleLogout}>Logout</button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => setShowLogin(true)}>Login</button>
+                <button onClick={() => setShowRegister(true)}>Register</button>
+              </>
+            )}
+          </div>
+        )}
       </header>
     </>
   );

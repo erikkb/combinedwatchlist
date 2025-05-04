@@ -75,6 +75,7 @@ export default function ProfileModal({ onClose }: ProfileModalProps) {
             type="password"
             placeholder="New Password"
             value={newPassword}
+            maxLength={255}
             onChange={(e) => setNewPassword(e.target.value)}
           />
           <input

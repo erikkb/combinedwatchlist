@@ -27,6 +27,46 @@ export default function RegisterModal({ onClose }: RegisterModalProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
+  // async function handleSubmit(e: React.FormEvent) {
+  //   e.preventDefault();
+  //   setError("");
+  //   setSuccess("");
+  //   const csrfToken = getCookie("XSRF-TOKEN");
+  
+  //   const payload = { username, password, email: email || null };
+  
+  //   try {
+  //     const res = await fetch(`${baseUrl}/api/users/register`, {
+  //       method: "POST",
+  //       credentials: "include",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+  
+  //     const json = await res.json().catch(() => null);
+  
+  //     if (!res.ok) {
+  //       throw new Error(json?.error || "Registration failed");
+  //     }
+  
+  //     // Backend returned user directly
+  //     setUser(json);
+  
+  //     setSuccess("Registration successful!");
+  //     setUsername("");
+  //     setPassword("");
+  //     setEmail("");
+  //     onClose();
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     setError(err.message || "Registration failed");
+  //   }
+  // }
+  
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -83,6 +123,7 @@ export default function RegisterModal({ onClose }: RegisterModalProps) {
             placeholder="Username"
             value={username}
             required
+            maxLength={255}
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
@@ -90,6 +131,7 @@ export default function RegisterModal({ onClose }: RegisterModalProps) {
             placeholder="Password"
             value={password}
             required
+            maxLength={255}
             onChange={(e) => setPassword(e.target.value)}
           />
           <input
@@ -98,9 +140,9 @@ export default function RegisterModal({ onClose }: RegisterModalProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {error && <div className="error">{error}</div>}
-          {success && <div className="success">{success}</div>}
           <button type="submit">Register</button>
+          {error && <div className="error"><br />{error}</div>}
+          {success && <div className="success"><br />{success}</div>}
         </form>
       </div>
     </div>

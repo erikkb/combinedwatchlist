@@ -73,7 +73,7 @@ export default function RequestResetModal({ onClose }: RequestResetModalProps) {
           <button type="submit" disabled={status === "sending"}>
             {status === "sending" ? "Sending..." : "Send Reset Link"}
           </button>
-          {message && <div className="info">{message}</div>}
+          {message && <div className="info"><br />{message}</div>}
         </form>
       </div>
     </div>

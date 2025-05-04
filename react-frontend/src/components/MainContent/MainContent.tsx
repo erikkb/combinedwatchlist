@@ -79,7 +79,7 @@ export default function MainContent() {
       console.error(err);
       alert("Failed to add movie");
     } finally {
-      setMovies(prev => prev.filter(m => m.id !== movie.id)); // remove from search
+      // setMovies(prev => prev.filter(m => m.id !== movie.id)); // remove from search
     }
   }
 
@@ -118,6 +118,34 @@ export default function MainContent() {
       console.log("Watchlist updated with movie");      
     }
   }
+
+  async function removeMovieFromWatchlist(movieId: number) {
+    const isLoggedIn = !!user;
+    const getUrl = !isLoggedIn ? `${baseUrl}/api/watchlist` : `${baseUrl}/api/watchlist/user/${user.userId}`;
+  
+    const watchlistRes = await fetch(getUrl, { credentials: "include" });
+    if (!watchlistRes.ok) throw new Error("Failed to fetch watchlist");
+  
+    const watchlist = await watchlistRes.json();
+    const putUrl = !isLoggedIn ? `${baseUrl}/api/watchlist` : `${baseUrl}/api/watchlist/${watchlist.id}`;
+  
+    const updated = { ...watchlist, movie_ids: watchlist.movie_ids.filter((id: number) => id !== movieId) };
+  
+    const putRes = await fetch(putUrl, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+  
+    if (!putRes.ok) throw new Error("Failed to update watchlist");
+  
+    setWatchlist(prev => ({
+      ...prev,
+      movie_ids: prev.movie_ids.filter(id => id !== movieId)
+    }));
+    console.log(`Removed movie ${movieId} from watchlist`);
+  }
   
   async function handleAddShow(show: Show) {
     const csrfToken = getCookie("XSRF-TOKEN");
@@ -153,7 +181,7 @@ export default function MainContent() {
       console.error(err);
       alert("Failed to add show");
     } finally {
-      setShows(prev => prev.filter(s => s.id !== show.id)); // remove from search
+      // setShows(prev => prev.filter(s => s.id !== show.id)); // remove from search
     }
   }
 
@@ -192,6 +220,33 @@ export default function MainContent() {
     }
   }
   
+  async function removeShowFromWatchlist(showId: number) {
+    const isLoggedIn = !!user;
+    const getUrl = !isLoggedIn ? `${baseUrl}/api/watchlist` : `${baseUrl}/api/watchlist/user/${user.userId}`;
+  
+    const watchlistRes = await fetch(getUrl, { credentials: "include" });
+    if (!watchlistRes.ok) throw new Error("Failed to fetch watchlist");
+  
+    const watchlist = await watchlistRes.json();
+    const putUrl = !isLoggedIn ? `${baseUrl}/api/watchlist` : `${baseUrl}/api/watchlist/${watchlist.id}`;
+  
+    const updated = { ...watchlist, show_ids: watchlist.show_ids.filter((id: number) => id !== showId) };
+  
+    const putRes = await fetch(putUrl, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+  
+    if (!putRes.ok) throw new Error("Failed to update watchlist");
+  
+    setWatchlist(prev => ({
+      ...prev,
+      show_ids: prev.show_ids.filter(id => id !== showId)
+    }));
+    console.log(`Removed movie ${showId} from watchlist`);
+  }
 
   return (
     <main className="main-content">
@@ -218,6 +273,8 @@ export default function MainContent() {
         shows={shows}
         onAddMovie={handleAddMovie}
         onAddShow={handleAddShow}
+        onRemoveMovie={removeMovieFromWatchlist}
+        onRemoveShow={removeShowFromWatchlist}
         watchlist={watchlist}
       />
     </main>

@@ -55,7 +55,7 @@
   .search-form button:hover {
     background: var(--ctp-mocha-sky);
   }
-  
+    
   @media (max-width: 600px) {
     .main-content {
       margin: 1rem;

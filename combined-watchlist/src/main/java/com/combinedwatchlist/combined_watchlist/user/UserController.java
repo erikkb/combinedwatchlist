@@ -5,6 +5,7 @@ import com.combinedwatchlist.combined_watchlist.user.dto.RegisterRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,9 +23,15 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void register(@RequestBody @Valid RegisterRequest request, HttpSession session) {
-        userService.register(request, session);
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request, HttpSession session) {
+        try {
+            userService.register(request, session);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (RegistrationException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", ex.getMessage()));
+        }
     }
 
     @ExceptionHandler(RegistrationException.class)

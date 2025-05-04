@@ -7,6 +7,8 @@ interface SearchResultsProps {
   shows: Show[];
   onAddMovie: (movie: Movie) => void;
   onAddShow: (show: Show) => void;
+  onRemoveMovie: (movieId: number) => void;
+  onRemoveShow: (showId: number) => void;
   watchlist: { movie_ids: number[]; show_ids: number[] };
 }
 
@@ -15,6 +17,8 @@ export default function SearchResults({
   shows,
   onAddMovie,
   onAddShow,
+  onRemoveMovie,
+  onRemoveShow,
   watchlist
 }: SearchResultsProps) {
   const [activeMovieId, setActiveMovieId] = useState<number | null>(null);
@@ -42,8 +46,8 @@ export default function SearchResults({
       <div className="results-column">
         <h2>Movies</h2>
         <div className="results-grid">
-          {movies.map(movie => (
-            <div key={movie.id} className="result-item">
+          {movies.map((movie, index) => (
+            <div key={movie.id} className="result-item" style={{ animationDelay: `${index * 50}ms` }}>
               <div
                 className="poster-container"
                 onClick={() => handleMovieClick(movie.id)}
@@ -56,7 +60,7 @@ export default function SearchResults({
                 <div className={`overlay ${(activeMovieId === movie.id) ? "show" : ""}`}>
                   <span>{movie.title}</span>
                   <span>{movie.release_date ? ` (${new Date(movie.release_date).getFullYear()})` : ""}</span>
-                  <button
+                  {/* <button
                     disabled={watchlist.movie_ids.includes(movie.id)}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -67,7 +71,27 @@ export default function SearchResults({
                     style={watchlist.movie_ids.includes(movie.id) ? { color: "var(--ctp-mocha-red)" } : {}}
                     >
                     {watchlist.movie_ids.includes(movie.id) ? "✓" : "+"}
-                  </button>
+                  </button> */}
+                  {watchlist.movie_ids.includes(movie.id) ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveMovie(movie.id);
+                      }}
+                      style={{ background: "var(--ctp-mocha-red)", color: "var(--ctp-mocha-base)" }}
+                    >
+                      ×
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddMovie(movie);
+                      }}
+                    >
+                      +
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -78,8 +102,8 @@ export default function SearchResults({
       <div className="results-column">
         <h2>Shows</h2>
         <div className="results-grid">
-          {shows.map(show => (
-            <div key={show.id} className="result-item">
+          {shows.map((show, index) => (
+            <div key={show.id} className="result-item" style={{ animationDelay: `${index * 50}ms` }}>
               <div
                 className="poster-container"
                 onClick={() => handleShowClick(show.id)}
@@ -92,7 +116,7 @@ export default function SearchResults({
                 <div className={`overlay ${(activeShowId === show.id) ? "show" : ""}`}>
                   <span>{show.name}</span>
                   <span>{show.first_air_date ? ` (${new Date(show.first_air_date).getFullYear()})` : ""}</span>
-                  <button
+                  {/* <button
                     disabled={watchlist.show_ids.includes(show.id)}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -103,7 +127,27 @@ export default function SearchResults({
                     style={watchlist.show_ids.includes(show.id) ? { color: "var(--ctp-mocha-green)" } : {}}
                     >
                     {watchlist.show_ids.includes(show.id) ? "✓" : "+"}
-                  </button>
+                  </button> */}
+                  {watchlist.show_ids.includes(show.id) ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveShow(show.id);
+                      }}
+                      style={{ background: "var(--ctp-mocha-red)", color: "var(--ctp-mocha-base)" }}
+                    >
+                      ×
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddShow(show);
+                      }}
+                    >
+                      +
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

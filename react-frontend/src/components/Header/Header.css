@@ -36,6 +36,13 @@
     gap: 1rem;
   }
   
+  .error {
+    color: var(--ctp-mocha-red)
+  }
+
+  .success {
+    color: var(--ctp-mocha-green);
+  }
   
   .header button,
   .dropdown-content button {
@@ -99,12 +106,58 @@
   .forgot-password a:hover {
     text-decoration: none;
   }
+
+  .header .username-button {
+    background: var(--ctp-mocha-base);
+    color: var(--ctp-mocha-text);
+    /* border: 2px solid var(--ctp-mocha-blue); */ 
+    border: none;
+    outline: 2px solid var(--ctp-mocha-blue);
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    /* font: inherit; */
+    /* box-sizing: border-box; */
+    /* vertical-align: middle; */
+    line-height: normal;
+  }
+
+  .hamburger {
+    display: none;
+    background: var(--ctp-mocha-base);
+    color: var(--ctp-mocha-text);
+    border: 2px solid var(--ctp-mocha-blue);
+    border-radius: 5px;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .hamburger-icon {
+    display: inline-block;
+    transform: translateY(-3px); /* adjust as needed */
+  }
+  
+  .mobile-menu {
+    position: absolute;
+    top: 4rem;
+    right: 1rem;
+    background: var(--ctp-mocha-surface0);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
   
   @media (max-width: 600px) {
     .header {
       display: flex;
-      flex-direction: row; /* keep flex-row but allow wrap */
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       padding: 1rem;
@@ -115,17 +168,21 @@
     }
   
     .header-center {
-      order: -1; /* move h1 to top */
-      width: 100%;
-      text-align: center;
-      margin-bottom: 1rem;
+      margin: 0;
+      order :1;
+    }
+
+    .header .username-button {
+      background-color: var(--ctp-mocha-surface0);
     }
   
     .header-left,
     .header-right {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      display: none;
+    }
+    .hamburger {
+      display: block;
+      order: 3;
     }
   }
   
