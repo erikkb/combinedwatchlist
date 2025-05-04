@@ -100,7 +100,7 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
                     className="username-button"
                     title={user.username} // tooltip for full username
                   >
-                    {user.username.length > 11 ? user.username.slice(0, 10) + "…" : user.username}
+                    {user.username.length > 12 ? user.username.slice(0, 11) + "…" : user.username}
                   </button>
                   <button onClick={handleLogout}>Logout</button>
                 </>
@@ -135,7 +135,7 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
                   className="username-button"
                   title={user.username}
                 >
-                  {user.username.length > 11 ? user.username.slice(0, 10) + "…" : user.username}
+                  {user.username.length > 12 ? user.username.slice(0, 11) + "…" : user.username}
                 </button>
                 <button onClick={handleLogout}>Logout</button>
               </>

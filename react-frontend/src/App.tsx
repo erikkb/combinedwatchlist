@@ -5,6 +5,7 @@ import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import MainContent from "./components/MainContent/MainContent";
 import ResetPasswordPage from "./components/ResetPasswordPage/ResetPasswordPage.tsx";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage/PrivacyPolicyPage.tsx";
 import { User } from "./types.ts"
 import { getCookie } from "./utils/cookies.ts";
 import "./App.css";
@@ -55,6 +56,7 @@ function App() {
           <Route path="/" element={<><Header /><MainContent /><Footer /></>} />
           <Route path="/reset-password" element={<><Header minimal /><ResetPasswordPage /><Footer /></>} />
           {/* <Route path="/watchlist" element={<><Header /><div>TODO Watchlist Page</div><Footer /></>} /> */}
+          <Route path="/privacy-policy" element={<><Header /><PrivacyPolicyPage /><Footer /></>} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>
