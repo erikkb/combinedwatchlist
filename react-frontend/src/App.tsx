@@ -1,8 +1,10 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { UserContext } from "./context/UserContext";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import MainContent from "./components/MainContent/MainContent";
+import ResetPasswordPage from "./components/ResetPasswordPage/ResetPasswordPage.tsx";
 import { User } from "./types.ts"
 import { getCookie } from "./utils/cookies.ts";
 import "./App.css";
@@ -48,9 +50,13 @@ function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      <Header />
-      <MainContent />
-      <Footer />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<><Header /><MainContent /><Footer /></>} />
+          <Route path="/reset-password" element={<><Header minimal /><ResetPasswordPage /><Footer /></>} />
+          {/* <Route path="/watchlist" element={<><Header /><div>TODO Watchlist Page</div><Footer /></>} /> */}
+        </Routes>
+      </BrowserRouter>
     </UserContext.Provider>
   );
 }

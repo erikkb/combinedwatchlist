@@ -39,10 +39,12 @@ public class UserService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final JavaMailSender mailSender;
     private final String appBaseUrl;
+    private final String frontendBaseUrl;
+    private final boolean reactMode;
     private final JdbcTemplate jdbcTemplate;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, WatchlistService watchlistService,
-                       PasswordResetTokenRepository passwordResetTokenRepository, JavaMailSender mailSender, @Value("${app.base-url}") String appBaseUrl, JdbcTemplate jdbcTemplate) {
+                       PasswordResetTokenRepository passwordResetTokenRepository, JavaMailSender mailSender, @Value("${app.base-url}") String appBaseUrl, JdbcTemplate jdbcTemplate, @Value("${frontend.base-url}") String frontendBaseUrl, @Value("${app.react-mode}") boolean reactMode) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.watchlistService = watchlistService;
@@ -50,6 +52,8 @@ public class UserService {
         this.mailSender = mailSender;
         this.appBaseUrl = appBaseUrl;
         this.jdbcTemplate = jdbcTemplate;
+        this.frontendBaseUrl = frontendBaseUrl;
+        this.reactMode = reactMode;
     }
 
     public void register(RegisterRequest request, HttpSession session) {
@@ -139,7 +143,13 @@ public class UserService {
         passwordResetTokenRepository.save(resetToken);
 
         // Build the reset URL
-        String resetUrl = appBaseUrl + "/reset-password.html?token=" + token;
+        String resetUrl;
+        if (reactMode) {
+            resetUrl = appBaseUrl + "/reset-password.html?token=" + token;
+        } else {
+            //vite/react don't want .html in the URL (planning to serve react app as SPA from /static)
+            resetUrl = frontendBaseUrl + "/reset-password?token=" + token;
+        }
 
         // Send the email
         SimpleMailMessage mailMessage = new SimpleMailMessage();

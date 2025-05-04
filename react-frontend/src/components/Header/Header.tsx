@@ -7,7 +7,7 @@ import RequestResetModal from "../RequestResetModal/RequestResetModal";
 
 import "./Header.css";
 
-export default function Header() {
+export default function Header({ minimal = false }: { minimal?: boolean }) {
   const { user, setUser } = useUser();
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -73,38 +73,46 @@ export default function Header() {
 
   return (
     <>
-      <header className="header">
-        <button className="hamburger" onClick={() => setShowMobileMenu(!showMobileMenu)}>
-          <span className="hamburger-icon">☰</span> 
-        </button>
-        <div className="header-left">
-          <a href="/" onClick={() => setShowMobileMenu(false)}>Search</a>
-          <a href="/watchlist" onClick={() => setShowMobileMenu(false)}>Watchlist</a>
-        </div>
+      <header className={`${minimal ? 'header-minimal' : 'header'}`}>
+        {!minimal && (
+          <>
+            <button className="hamburger" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+              <span className="hamburger-icon">☰</span> 
+            </button>
+            <div className="header-left">
+              <a href="/" onClick={() => setShowMobileMenu(false)}>Search</a>
+              <a href="/watchlist" onClick={() => setShowMobileMenu(false)}>Watchlist</a>
+            </div>
+          </>
+        )}
 
         <div className="header-center">
           <h1>combinedwatchlist</h1>
         </div>
 
-        <div className="header-right">
-          {user ? (
-            <>
-              <button
-                onClick={() => { setShowProfile(true); }}
-                className="username-button"
-                title={user.username} // tooltip for full username
-              >
-                {user.username.length > 11 ? user.username.slice(0, 10) + "…" : user.username}
-              </button>
-              <button onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => { setShowLogin(true); }}>Login</button>
-              <button onClick={() => { setShowRegister(true); }}>Register</button>
-            </>
-          )}
-        </div>
+        {!minimal && (
+          <>
+            <div className="header-right">
+              {user ? (
+                <>
+                  <button
+                    onClick={() => { setShowProfile(true); }}
+                    className="username-button"
+                    title={user.username} // tooltip for full username
+                  >
+                    {user.username.length > 11 ? user.username.slice(0, 10) + "…" : user.username}
+                  </button>
+                  <button onClick={handleLogout}>Logout</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => { setShowLogin(true); }}>Login</button>
+                  <button onClick={() => { setShowRegister(true); }}>Register</button>
+                </>
+              )}
+            </div>
+          </>
+        )}
 
         {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
         {showLogin && <LoginModal 
