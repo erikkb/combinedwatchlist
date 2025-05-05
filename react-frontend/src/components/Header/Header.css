@@ -195,6 +195,17 @@
       display: block;
       order: 3;
     }
+    .burger-separator {
+      display: block;
+      width: 120%;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 2px;
+      background-color: var(--ctp-mocha-text);
+      margin: 0.5rem 0;
+      margin-bottom: 1rem;
+    }
   }
   
   

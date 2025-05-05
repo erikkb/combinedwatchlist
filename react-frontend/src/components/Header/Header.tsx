@@ -114,7 +114,7 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
           </>
         )}
 
-        {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
+        {showProfile && <ProfileModal onClose={() => setShowProfile(false)} setUser={setUser} />}
         {showLogin && <LoginModal 
           onClose={() => setShowLogin(false)}
           onForgotPassword={() => {
@@ -127,7 +127,9 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
           <div className="mobile-menu" ref={menuRef}>
             <a href="/">Search</a>
             <a href="/watchlist">Watchlist</a>
-            <br />
+            {/* <br /> */}
+            <span className="burger-separator"></span>
+            {/* <br /> */}
             {user ? (
               <>
                 <button 

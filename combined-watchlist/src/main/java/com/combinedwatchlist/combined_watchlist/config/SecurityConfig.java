@@ -51,6 +51,7 @@ public class SecurityConfig {
                         // GET for all authenticated and PATCH only for roles USER and ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/users/me").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/users/me").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/me").hasRole("USER")
                         // PUT to /api/watchlist/{id} requires USER or ADMIN (DB-level updates, session based updates still allowed for PUT /api/watchlist)
                         .requestMatchers(HttpMethod.PUT, "/api/watchlist/*").hasAnyRole("ADMIN", "USER")
                         // Allow everything else

@@ -61,6 +61,12 @@ public class UserController {
         userService.updateUser(username, updates);
     }
 
+    @DeleteMapping("/me")
+    public void deleteCurrentUser(Authentication authentication) {
+        String username = authentication.getName();
+        userService.deleteUser(username);
+    }
+
     @PostMapping("/request-password-reset")
     @ResponseStatus(HttpStatus.OK)
     public void requestPasswordReset(@RequestBody PasswordResetRequest request) {

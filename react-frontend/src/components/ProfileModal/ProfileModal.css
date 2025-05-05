@@ -1,1 +1,5 @@
-/* all styles in Header.css at the moment, consider putting relevant styles here for clarity */
+/* most styles in Header.css at the moment, consider putting relevant styles here for clarity */
+.dropdown .delete-account-button {
+    background-color: var(--ctp-mocha-red);
+    width: 98%;
+}

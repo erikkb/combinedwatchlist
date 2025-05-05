@@ -117,6 +117,18 @@ public class UserService {
     }
 
     @Transactional
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        // Delete the user's watchlist
+        watchlistService.delete(user.getId());
+
+        // Delete the user
+        userRepository.delete(user);
+    }
+
+    @Transactional
     public void requestPasswordReset(String email) {
         // Find the user by email
         Optional<User> userOptional = userRepository.findByEmail(email);
