@@ -1,6 +1,7 @@
 package com.combinedwatchlist.combined_watchlist.user;
 
 import com.combinedwatchlist.combined_watchlist.user.dto.PasswordResetRequest;
+import com.combinedwatchlist.combined_watchlist.user.dto.ProfileUpdateRequest;
 import com.combinedwatchlist.combined_watchlist.user.dto.RegisterRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -56,7 +57,7 @@ public class UserController {
     }
 
     @PatchMapping("/me")
-    public void updateCurrentUser(@RequestBody Map<String, String> updates, Authentication authentication) {
+    public void updateCurrentUser(@RequestBody @Valid ProfileUpdateRequest updates, Authentication authentication) {
         String username = authentication.getName();
         userService.updateUser(username, updates);
     }

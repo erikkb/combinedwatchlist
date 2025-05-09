@@ -13,6 +13,7 @@ export default function LoginModal({ onClose, onForgotPassword }: LoginModalProp
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -39,7 +40,7 @@ export default function LoginModal({ onClose, onForgotPassword }: LoginModalProp
           "Content-Type": "application/x-www-form-urlencoded",
           ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {})
         },
-        body: new URLSearchParams({ username, password }).toString()
+        body: new URLSearchParams({ username, password, ...(rememberMe ? { "remember-me": "on" } : {}) }).toString()
       });
 
       if (!res.ok) throw new Error("Invalid credentials");
@@ -82,6 +83,16 @@ export default function LoginModal({ onClose, onForgotPassword }: LoginModalProp
             onChange={e => setPassword(e.target.value)}
             required
           />
+          <div className="remember-me-wrapper">
+            <input
+              type="checkbox"
+              name="remember-me"
+              checked={rememberMe}
+              onChange={e => setRememberMe(e.target.checked)}
+              id="remember-me"
+            />
+            <label htmlFor="remember-me">Remember Me</label>
+          </div>
           <button type="submit">Login</button>
           {error && <div className="error"><br />{error}</div>}
           <p className="forgot-password">

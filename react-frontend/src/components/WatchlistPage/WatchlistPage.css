@@ -1,0 +1,24 @@
+.watchlist-page {
+    max-width: 90%;
+    margin: 2rem auto;
+    text-align: center;
+    padding: 1rem;
+}
+
+.select-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-notice {
+    padding-top: 1rem;
+}
+
+@media (max-width: 600px) {
+    .select-row {
+        display: block;
+        justify-content: normal;
+        align-items: normal;
+    }
+}

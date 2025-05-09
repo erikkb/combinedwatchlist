@@ -4,7 +4,7 @@ A tool to search for TV shows and movies, manage a personal watchlist, and ident
 Only services that offer complete access to a title for subscribers will be shown. Titles with limited availability (e.g., partial seasons) or those available only for rental or purchase are excluded.
 
 ## Requirements
-- Docker Desktop
+- Docker
 - A configuration file located at combined-watchlist/src/main/resources/credentials.properties containing:
     ```properties
     TMDB_KEY=get here: https://www.themoviedb.org/documentation/api
@@ -23,7 +23,7 @@ If `app.react-mode=false` is set in `combined-watchlist/src/main/resources/appli
 ### React frontend (under development)
 To use the standalone React frontend:
 
-1. Set `app.react-mode=false` (true requires building the react project and serving it from Spring Boot).
+1. Set `app.react-mode=false` ("true" requires building the react project and serving it from Spring Boot).
 2. Navigate to the frontend directory (`/react-frontend`).
 3. Install dependencies (only needed once):
    ```bash

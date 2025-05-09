@@ -36,12 +36,15 @@ export default function PrivacyPolicyPage() {
                     <li>This data is stored either in a temporary session (guest users) or in the database linked to your account (registered users)</li>
                 </ul>
                 <h4>3.3 Cookies</h4>
-                <p>This website uses two essential cookies:</p>
+                <p>This website uses two essential cookies and one optional cookie:</p>
                 <ul>
-                    <li>1. SESSION – required to maintain your session (guest or logged-in)</li>
-                    <li>2. XSRF-TOKEN – required for security to prevent CSRF attacks</li>
+                    <li>1. <strong>SESSION</strong> – required to maintain your session (guest or logged-in); expires after 72 hours.</li>
+                    <li>2. <strong>XSRF-TOKEN</strong> – required for security to prevent CSRF attacks; expires at the end of the session.</li>
+                    <li>3. <strong>remember-me</strong> – optional cookie that allows you to stay logged in across browser sessions; set only if you check the “Remember Me” option during login; valid for up to 30 days or until you log out.</li>
                 </ul>
-                <p>Both cookies are strictly necessary for the technical operation and security of the site. No analytics, tracking, marketing, or third-party cookies are used. Because only essential cookies are used, no cookie banner is displayed.</p>
+                <p>The SESSION and XSRF-TOKEN cookies are strictly necessary for the technical operation and security of the site. The remember-me cookie is an optional functional cookie, stored only with your consent by selecting “Remember Me” at login. No analytics, tracking, marketing, or third-party cookies are used. Because only essential and user-requested functional cookies are used, no cookie banner is displayed.</p>
+                <h4>3.4 Local Storage</h4>
+                <p>We use browser-based storage mechanisms (e.g., localStorage) to store your last selected country preference for usability purposes. This data is not shared or transmitted to any third parties and is cleared manually by the user.</p>
                 <h3>4. Purpose of Processing</h3>
                 <p>Your personal data is processed solely for:</p>
                 <ul>

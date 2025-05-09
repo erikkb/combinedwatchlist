@@ -9,6 +9,7 @@ import PrivacyPolicyPage from "./components/PrivacyPolicyPage/PrivacyPolicyPage.
 import { User } from "./types.ts"
 import { getCookie } from "./utils/cookies.ts";
 import "./App.css";
+import WatchlistPage from "./components/WatchlistPage/WatchlistPage.tsx";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -16,37 +17,34 @@ function App() {
 
   useEffect(() => {
     const csrfToken = getCookie('XSRF-TOKEN');
-
-    // Check user login status
+  
     fetch(`${baseUrl}/api/users/me`, {
       method: "GET",
       headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {},
       credentials: 'include'
-      })
-      .then((res) => {
-        if (!res.ok) throw new Error("Not logged in");
-        return res.json();
-      })
-      .then((data) => {
-        setUser(data);
-        console.log("Logged in user:", data);
-      })
-      .catch(() => {
-        console.log("User is a guest");
-      });
-
-    // Ensure watchlist exists
-    fetch(`${baseUrl}/api/watchlist`, {
-      method: "GET",
-      headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {},
-      credentials: 'include'
     })
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to create watchlist");
-        console.log("Watchlist ensured");
+    .then(res => {
+      if (!res.ok) throw new Error("Not logged in");
+      return res.json();
+    })
+    .then(data => {
+      setUser(data);
+      console.log("Logged in user:", data);
+    })
+    .catch(() => {
+      console.log("User is a guest");
+      // only create watchlist if not logged in
+      return fetch(`${baseUrl}/api/watchlist`, {
+        method: "GET",
+        headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {},
+        credentials: 'include'
       })
-      .catch(err => console.error(err));
-    
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to create watchlist");
+          console.log("Watchlist ensured");
+        })
+        .catch(err => console.error(err));
+    });
   }, [baseUrl]);
 
   return (
@@ -55,7 +53,7 @@ function App() {
         <Routes>
           <Route path="/" element={<><Header /><MainContent /><Footer /></>} />
           <Route path="/reset-password" element={<><Header minimal /><ResetPasswordPage /><Footer /></>} />
-          {/* <Route path="/watchlist" element={<><Header /><div>TODO Watchlist Page</div><Footer /></>} /> */}
+          <Route path="/watchlist" element={<><Header /><WatchlistPage/><Footer /></>} />
           <Route path="/privacy-policy" element={<><Header /><PrivacyPolicyPage /><Footer /></>} />
         </Routes>
       </BrowserRouter>

@@ -1,1 +1,8 @@
-/* all styles in Header.css at the moment, consider putting relevant styles here for clarity */
+/* most styles in Header.css */
+.remember-me-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* left align */
+  gap: 0.4rem;
+  padding: 0.5rem 0;
+}

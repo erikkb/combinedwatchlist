@@ -45,6 +45,7 @@ export default function SearchResults({
     <div className="search-results">
       <div className="results-column">
         <h2>Movies</h2>
+        <span className="separator"></span>
         <div className="results-grid">
           {movies.map((movie, index) => (
             <div key={movie.id} className="result-item" style={{ animationDelay: `${index * 50}ms` }}>
@@ -60,18 +61,6 @@ export default function SearchResults({
                 <div className={`overlay ${(activeMovieId === movie.id) ? "show" : ""}`}>
                   <span>{movie.title}</span>
                   <span>{movie.release_date ? ` (${new Date(movie.release_date).getFullYear()})` : ""}</span>
-                  {/* <button
-                    disabled={watchlist.movie_ids.includes(movie.id)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (!watchlist.movie_ids.includes(movie.id)) {
-                        onAddMovie(movie);
-                      }
-                    }}
-                    style={watchlist.movie_ids.includes(movie.id) ? { color: "var(--ctp-mocha-red)" } : {}}
-                    >
-                    {watchlist.movie_ids.includes(movie.id) ? "✓" : "+"}
-                  </button> */}
                   {watchlist.movie_ids.includes(movie.id) ? (
                     <button
                       onClick={(e) => {
@@ -88,6 +77,7 @@ export default function SearchResults({
                         e.stopPropagation();
                         onAddMovie(movie);
                       }}
+                      style={{ background: "var(--ctp-mocha-blue)"}}
                     >
                       +
                     </button>
@@ -101,6 +91,7 @@ export default function SearchResults({
 
       <div className="results-column">
         <h2>Shows</h2>
+        <span className="separator"></span>
         <div className="results-grid">
           {shows.map((show, index) => (
             <div key={show.id} className="result-item" style={{ animationDelay: `${index * 50}ms` }}>
@@ -116,18 +107,6 @@ export default function SearchResults({
                 <div className={`overlay ${(activeShowId === show.id) ? "show" : ""}`}>
                   <span>{show.name}</span>
                   <span>{show.first_air_date ? ` (${new Date(show.first_air_date).getFullYear()})` : ""}</span>
-                  {/* <button
-                    disabled={watchlist.show_ids.includes(show.id)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (!watchlist.show_ids.includes(show.id)) {
-                        onAddShow(show);
-                      }
-                    }}
-                    style={watchlist.show_ids.includes(show.id) ? { color: "var(--ctp-mocha-green)" } : {}}
-                    >
-                    {watchlist.show_ids.includes(show.id) ? "✓" : "+"}
-                  </button> */}
                   {watchlist.show_ids.includes(show.id) ? (
                     <button
                       onClick={(e) => {
@@ -144,6 +123,7 @@ export default function SearchResults({
                         e.stopPropagation();
                         onAddShow(show);
                       }}
+                      style={{ background: "var(--ctp-mocha-blue)"}}
                     >
                       +
                     </button>

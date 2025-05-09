@@ -1,6 +1,8 @@
 package com.combinedwatchlist.combined_watchlist.user;
 
+import com.combinedwatchlist.combined_watchlist.user.dto.ProfileUpdateRequest;
 import com.combinedwatchlist.combined_watchlist.user.dto.RegisterRequest;
+import com.combinedwatchlist.combined_watchlist.watchlist.Watchlist;
 import com.combinedwatchlist.combined_watchlist.watchlist.WatchlistService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,10 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -70,7 +69,16 @@ public class UserService {
         user = userRepository.save(user);
 
         // Migrate guest watchlist to DB
-        watchlistService.migrateGuestWatchlistToUser(session, user.getId());
+        if (session.getAttribute("watchlist") != null) {
+            watchlistService.migrateGuestWatchlistToUser(session, user.getId());
+        } else {
+            Watchlist watchlist = new Watchlist();
+            watchlist.setUserId(user.getId());
+            watchlist.setMovieIds(Collections.emptyList());
+            watchlist.setShowIds(Collections.emptyList());
+            session.setAttribute("watchlist", watchlist);
+            watchlistService.migrateGuestWatchlistToUser(session, user.getId());
+        }
 
         loginUser(user, session);
     }
@@ -102,15 +110,16 @@ public class UserService {
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found in DB"));
     }
 
-    public void updateUser(String username, Map<String, String> updates) {
+    public void updateUser(String username, ProfileUpdateRequest updates) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
-        if (updates.containsKey("password")) {
-            user.setPassword(passwordEncoder.encode(updates.get("password")));
+        if (updates.password() != null && !updates.password().isBlank()) {
+            user.setPassword(passwordEncoder.encode(updates.password()));
         }
-        if (updates.containsKey("email")) {
-            user.setEmail(updates.get("email"));
+
+        if (updates.email() != null && !updates.email().isBlank()) {
+            user.setEmail(updates.email());
         }
 
         userRepository.save(user);

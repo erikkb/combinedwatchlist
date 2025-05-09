@@ -27,50 +27,41 @@ export default function RegisterModal({ onClose }: RegisterModalProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
-  // async function handleSubmit(e: React.FormEvent) {
-  //   e.preventDefault();
-  //   setError("");
-  //   setSuccess("");
-  //   const csrfToken = getCookie("XSRF-TOKEN");
-  
-  //   const payload = { username, password, email: email || null };
-  
-  //   try {
-  //     const res = await fetch(`${baseUrl}/api/users/register`, {
-  //       method: "POST",
-  //       credentials: "include",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-  
-  //     const json = await res.json().catch(() => null);
-  
-  //     if (!res.ok) {
-  //       throw new Error(json?.error || "Registration failed");
-  //     }
-  
-  //     // Backend returned user directly
-  //     setUser(json);
-  
-  //     setSuccess("Registration successful!");
-  //     setUsername("");
-  //     setPassword("");
-  //     setEmail("");
-  //     onClose();
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     setError(err.message || "Registration failed");
-  //   }
-  // }
-  
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+
+    if (!username.trim()) {
+      setError("Username cannot be blank.");
+      return;
+    }
+    if (!usernameRegex.test(username)) {
+      setError("Username can only contain letters, numbers, and underscores.");
+      return;
+    }
+    if (username.length > 255) {
+      setError("Username can't be longer than 255 characters.");
+      return;
+    }
+  
+    if (!password.trim()) {
+      setError("Password cannot be blank.");
+      return;
+    }
+
+    if (password.length > 255) {
+      setError("Password can't be longer than 255 characters.");
+      return;
+    }
+  
+    if (email && email.length > 255) {
+      setError("Email can't be longer than 255 characters.");
+      return;
+    }
+
     const csrfToken = getCookie("XSRF-TOKEN");
 
     const payload = { username, password, email: email || null };

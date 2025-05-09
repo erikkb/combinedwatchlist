@@ -41,6 +41,11 @@ export default function ProfileModal({ onClose, setUser }: ProfileModalProps) {
       return;
     }
 
+    if (newEmail && newEmail.length > 255) {
+      setError("Email can't be longer than 255 characters.");
+      return;
+    }
+
     try {
       //Fetch first to refresh CSRF token cookie
       await fetch(`${baseUrl}/api/users/me`, { credentials: "include" });

@@ -1,0 +1,15 @@
+select {
+    background-color: var(--ctp-mocha-blue);
+    color: var(--ctp-mocha-base);
+    border: none;
+    border-radius: 5px;
+    width: 45px;
+    text-align: center;
+    appearance: none;
+}
+
+@media (max-width: 600px) {
+    select {
+        margin-bottom: 2rem;
+    }
+}
