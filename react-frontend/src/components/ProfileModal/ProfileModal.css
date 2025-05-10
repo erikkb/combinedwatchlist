@@ -3,3 +3,7 @@
     background-color: var(--ctp-mocha-red);
     width: 98%;
 }
+
+.dropdown .delete-account-button:hover {
+    background-color: var(--ctp-mocha-pink);
+}

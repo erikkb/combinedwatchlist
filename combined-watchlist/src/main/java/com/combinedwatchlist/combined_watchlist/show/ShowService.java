@@ -44,7 +44,8 @@ public class ShowService {
         showRepository.save(show);
     }
 
-    //works for now as workaround to the error with updating via save() stating that the id already exists (something with sequence?)
+    // works for now as workaround
+    // fix by reworking @Id to BIGSERIAL and adding a tmbdId field to replace current id field
     public void update(Show show, long id) {
         if(id == show.getId()) {
             delete(id);

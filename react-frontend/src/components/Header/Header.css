@@ -58,6 +58,12 @@
     padding: 0.25rem 0.5rem;
     border-radius: 5px;
     margin-left: 0.25rem;
+    cursor: pointer;
+  }
+
+  .header button:hover {
+    background: var(--ctp-mocha-sky);
+    color: var(--ctp-mocha-base);
   }
   
   .header-center h1 {

@@ -46,7 +46,8 @@ public class MovieService {
     }
 
 
-    //works for now as workaround to the error with updating via save() stating that the id already exists (something with sequence?)
+    // works for now as workaround
+    // fix by reworking @Id to BIGSERIAL and adding a tmbdId field to replace current id field
     public void update(Movie movie, long id) {
         if(id==movie.getId()){
             delete(id);
