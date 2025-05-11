@@ -25,7 +25,7 @@ export default function ResetPasswordPage() {
         credentials: "include",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+          ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
         },
         body: new URLSearchParams({ token, newPassword }).toString(),
       });

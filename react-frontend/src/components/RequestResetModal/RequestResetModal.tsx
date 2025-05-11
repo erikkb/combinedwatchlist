@@ -41,7 +41,7 @@ export default function RequestResetModal({ onClose }: RequestResetModalProps) {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {})
+          ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {})
         },
         body: JSON.stringify({ email }),
       });

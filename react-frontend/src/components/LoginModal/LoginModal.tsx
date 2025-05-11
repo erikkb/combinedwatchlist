@@ -38,7 +38,7 @@ export default function LoginModal({ onClose, onForgotPassword }: LoginModalProp
         credentials: "include",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {})
+          ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {})
         },
         body: new URLSearchParams({ username, password, ...(rememberMe ? { "remember-me": "on" } : {}) }).toString()
       });
@@ -48,7 +48,7 @@ export default function LoginModal({ onClose, onForgotPassword }: LoginModalProp
       const userRes = await fetch(`${baseUrl}/api/users/me`, {
         method: "GET",
         credentials: "include",
-        headers: csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {},
+        headers: csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {},
       });
 
       if (!userRes.ok) throw new Error("Failed to fetch user info");

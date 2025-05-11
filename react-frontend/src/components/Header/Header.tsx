@@ -56,7 +56,7 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
       const watchlistRes = await fetch(`/api/watchlist`, {
         method: "POST",
         credentials: "include",
-        headers: csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}
+        headers: csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}
       });
   
       if (!watchlistRes.ok) {

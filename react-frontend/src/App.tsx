@@ -20,7 +20,7 @@ function App() {
   
     fetch(`${baseUrl}/api/users/me`, {
       method: "GET",
-      headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {},
+      headers: csrfToken ? { 'X-XSRF-TOKEN': csrfToken } : {},
       credentials: 'include'
     })
     .then(res => {
@@ -36,7 +36,7 @@ function App() {
       // only create watchlist if not logged in
       return fetch(`${baseUrl}/api/watchlist`, {
         method: "GET",
-        headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {},
+        headers: csrfToken ? { 'X-XSRF-TOKEN': csrfToken } : {},
         credentials: 'include'
       })
         .then(res => {
