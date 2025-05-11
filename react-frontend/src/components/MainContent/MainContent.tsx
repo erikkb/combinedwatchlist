@@ -64,7 +64,7 @@ export default function MainContent() {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+            ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
           },
           body: JSON.stringify(fullMovie),
         });
@@ -104,7 +104,7 @@ export default function MainContent() {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+        ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
       },
       body: JSON.stringify(updated),
     });
@@ -166,7 +166,7 @@ export default function MainContent() {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+            ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
           },
           body: JSON.stringify(fullShow),
         });
@@ -206,7 +206,7 @@ export default function MainContent() {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+        ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
       },
       body: JSON.stringify(updated),
     });

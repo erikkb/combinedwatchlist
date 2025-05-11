@@ -57,7 +57,7 @@ export default function ProfileModal({ onClose, setUser }: ProfileModalProps) {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+          ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
         },
         body: JSON.stringify(payload),
       });
@@ -88,7 +88,7 @@ export default function ProfileModal({ onClose, setUser }: ProfileModalProps) {
       const deleteRes = await fetch(`${baseUrl}/api/users/me`, {
         method: "DELETE",
         credentials: "include",
-        headers: csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {},
+        headers: csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {},
       });
   
       if (!deleteRes.ok) throw new Error("Failed to delete account");
@@ -111,7 +111,7 @@ export default function ProfileModal({ onClose, setUser }: ProfileModalProps) {
       const watchlistRes = await fetch(`${baseUrl}/api/watchlist`, {
         method: "POST",
         credentials: "include",
-        headers: csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {},
+        headers: csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {},
       });
   
       if (!watchlistRes.ok) {

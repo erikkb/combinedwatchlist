@@ -17,13 +17,13 @@ Only services that offer complete access to a title for subscribers will be show
 This file must include a valid TMDB API key, Spring Security admin credentials, and Gmail SMTP credentials (App Password required).
 
 ## Frontend
-### Rudimentary (integrated) frontend
+### Rudimentary frontend
 If `app.react-mode=false` is set in `combined-watchlist/src/main/resources/application.properties`, the backend will serve a basic frontend accessible at: [http://localhost:8080](http://localhost:8080).
 
-### React frontend (under development)
+### React frontend
 To use the standalone React frontend:
 
-1. Set `app.react-mode=false` ("true" requires building the react project and serving it from Spring Boot).
+1. Set `app.react-mode=true` and `frontend.base-url=http://localhost:5137`.
 2. Navigate to the frontend directory (`/react-frontend`).
 3. Install dependencies (only needed once):
    ```bash

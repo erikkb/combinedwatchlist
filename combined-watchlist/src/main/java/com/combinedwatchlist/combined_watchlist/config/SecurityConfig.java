@@ -16,11 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 
 @Configuration
@@ -31,17 +27,18 @@ public class SecurityConfig {
     private final GuestUserFilter guestUserFilter;
     private final UserRepository userRepository;
     private final boolean reactMode;
-    private final String frontendBaseUrl;
 
-    public SecurityConfig(GuestUserFilter guestUserFilter, UserRepository userRepository, @Value("${app.react-mode}") boolean reactMode, @Value("${frontend.base-url}") String frontendBaseUrl) {
+    public SecurityConfig(GuestUserFilter guestUserFilter, UserRepository userRepository, @Value("${app.react-mode}") boolean reactMode) {
         this.guestUserFilter = guestUserFilter;
         this.userRepository = userRepository;
         this.reactMode = reactMode;
-        this.frontendBaseUrl = frontendBaseUrl;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        requestHandler.setCsrfRequestAttributeName(null);
+
         http.authorizeHttpRequests(auth -> auth
                         // Forbid DELETE mappings for everyone other than ADMIN user
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/**", "/api/shows/**", "/api/watchlist/**")
@@ -84,30 +81,21 @@ public class SecurityConfig {
 
         if (reactMode) {
             http
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/users/login", "/api/users/logout"));
+                        .csrfTokenRequestHandler(requestHandler)
+                        .ignoringRequestMatchers(
+                                "/api/users/login",
+                                "/api/users/logout",
+                                "/api/users/register",
+                                "/api/movies/**",
+                                "/api/shows/**",
+                                "/api/watchlist/**"));
         } else {
             http.csrf(csrf -> csrf.disable());
         }
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        if (!reactMode) return null;
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(frontendBaseUrl));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(List.of("*"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
     }
 
     @Bean

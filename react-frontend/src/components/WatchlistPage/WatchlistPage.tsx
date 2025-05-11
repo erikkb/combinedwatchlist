@@ -68,7 +68,7 @@ export default function WatchlistPage() {
         const postRes = await fetch(`${baseUrl}/api/movies`, {
           method: "POST",
           credentials: "include",
-          headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}) },
+          headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}) },
           body: JSON.stringify(fullMovie),
         });
         if (!postRes.ok) throw new Error("Failed to add movie to DB");
@@ -99,7 +99,7 @@ export default function WatchlistPage() {
     const putRes = await fetch(putUrl, {
       method: "PUT",
       credentials: "include",
-      headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}) },
+      headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}) },
       body: JSON.stringify(updated),
     });
 
@@ -142,7 +142,7 @@ export default function WatchlistPage() {
         const postRes = await fetch(`${baseUrl}/api/shows`, {
           method: "POST",
           credentials: "include",
-          headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}) },
+          headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}) },
           body: JSON.stringify(fullShow),
         });
         if (!postRes.ok) throw new Error("Failed to add show to DB");
@@ -173,7 +173,7 @@ export default function WatchlistPage() {
     const putRes = await fetch(putUrl, {
       method: "PUT",
       credentials: "include",
-      headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}) },
+      headers: { "Content-Type": "application/json", ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}) },
       body: JSON.stringify(updated),
     });
 
@@ -234,7 +234,7 @@ export default function WatchlistPage() {
           credentials: "include",
           headers: { 
             "Content-Type": "application/json", 
-            ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}) 
+            ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}) 
           },
           body: JSON.stringify(updatedMovie)
         });
@@ -254,7 +254,7 @@ export default function WatchlistPage() {
           credentials: "include",
           headers: { 
             "Content-Type": "application/json", 
-            ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}) 
+            ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}) 
           },
           body: JSON.stringify(updatedShow)
         });

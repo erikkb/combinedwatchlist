@@ -72,7 +72,7 @@ export default function RegisterModal({ onClose }: RegisterModalProps) {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {})
+          ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {})
         },
         body: JSON.stringify(payload),
       });
@@ -85,7 +85,7 @@ export default function RegisterModal({ onClose }: RegisterModalProps) {
       const userRes = await fetch(`${baseUrl}/api/users/me`, {
         method: "GET",
         credentials: "include",
-        headers: csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {},
+        headers: csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {},
       });
 
       if (!userRes.ok) throw new Error("Failed to fetch user info");
