@@ -165,7 +165,7 @@ public class UserService {
 
         // Build the reset URL
         String resetUrl;
-        if (reactMode) {
+        if (!reactMode) {
             resetUrl = appBaseUrl + "/reset-password.html?token=" + token;
         } else {
             //vite/react don't want .html in the URL (planning to serve react app as SPA from /static)
