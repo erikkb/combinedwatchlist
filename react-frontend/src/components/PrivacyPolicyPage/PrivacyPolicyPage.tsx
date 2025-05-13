@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
                 <p>Privacy Policy for combinedwatchlist.<br />Effective date: 05.05.2025.</p>
                 <h3>1. Controller</h3>
                 <p>The controller responsible for data processing on this website is: <br /> <br /> {ownerName} <br /> {address1} <br /> {address2} <br /> {address3} <br /> {address4} <br /> <br /> <a href={`mailto:${ownerEmail}`}>{ownerEmail}</a></p>
-                <h3>General Information</h3>
+                <h3>2. General Information</h3>
                 <p>This privacy policy explains how we collect, use, and store your personal data when you use the website combinedwatchlist.</p>
                 <p>We take the protection of your personal data seriously and process it in accordance with the General Data Protection Regulation (GDPR) and other applicable laws.</p>
                 <h3>3. What Data We Collect</h3>
@@ -54,6 +54,8 @@ export default function PrivacyPolicyPage() {
                     <li>Sending password reset emails if requested</li>
                 </ul>
                 <p>Your data is not shared with third parties, except if legally required.</p>
+                <h4>4.1 Third-Party Data Sources</h4>
+                <p>To provide up-to-date information about movies and TV shows, this website uses The Movie Database (TMDB) API. TMDB is queried by our server to retrieve public metadata such as titles, posters, and provider availability. No personal user data (such as IP address, username, or email) is sent to TMDB, as all API requests are made server-side. TMDB does not receive or process user-related information.</p>
                 <h3>5. Legal Basis</h3>
                 <p>Data processing is based on:</p>
                 <ul>

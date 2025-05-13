@@ -255,7 +255,10 @@ export default function MainContent() {
           A tool to search for TV shows and movies, manage a personal watchlist, and identify which streaming platforms provide full access to selected content.
         </p>
         <p className="description">
-        Only services that offer complete access to a title for subscribers will be shown. Titles with limited availability (e.g., partial seasons) or those available only for rental or purchase are excluded.
+        Only services that offer complete access to a title for subscribers will be shown. Titles with limited availability (e.g., partial seasons) or those available only to rent or purchase are excluded.
+        </p>
+        <p className="description">
+        This product uses the TMDB API but is not endorsed or certified by TMDB.
         </p>
       </div>
       <form className="search-form" onSubmit={handleSearch}>

@@ -77,7 +77,7 @@ export default function SearchResults({
                         e.stopPropagation();
                         onAddMovie(movie);
                       }}
-                      style={{ background: "var(--ctp-mocha-blue)"}}
+                      style={{ background: "var(--ctp-mocha-green)"}}
                     >
                       +
                     </button>
@@ -123,7 +123,7 @@ export default function SearchResults({
                         e.stopPropagation();
                         onAddShow(show);
                       }}
-                      style={{ background: "var(--ctp-mocha-blue)"}}
+                      style={{ background: "var(--ctp-mocha-green)" }}
                     >
                       +
                     </button>

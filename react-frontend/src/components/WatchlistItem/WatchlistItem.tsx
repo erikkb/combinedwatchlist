@@ -126,7 +126,7 @@ export default function WatchlistItem({
                   isMovieType(item) ? onAddMovie(item) : onAddShow(item)
                 }
                 style={{
-                  background: "var(--ctp-mocha-blue)",
+                  background: "var(--ctp-mocha-green)",
                   color: "var(--ctp-mocha-base)",
                 }}
               >
