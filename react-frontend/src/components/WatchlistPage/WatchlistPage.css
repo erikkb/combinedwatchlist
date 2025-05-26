@@ -16,6 +16,10 @@
 }
 
 @media (max-width: 600px) {
+    .watchlist-page {
+        padding-top: 5rem;
+    }
+
     .select-row {
         display: block;
         justify-content: normal;
