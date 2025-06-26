@@ -12,8 +12,23 @@
 }
 
 .update-notice {
-    padding-top: 1rem;
+    padding-top: 2rem;
 }
+
+.update-notice button {
+    background: var(--ctp-mocha-blue);
+    color: var(--ctp-mocha-base);
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 5px;
+    margin-left: 0.25rem;
+    cursor: pointer;
+  }
+
+.update-notice button:hover {
+    background: var(--ctp-mocha-sky);
+    color: var(--ctp-mocha-base);
+  }
 
 @media (max-width: 600px) {
     .watchlist-page {
